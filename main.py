@@ -1,12 +1,28 @@
 import sys
 import pygame
 from pygame.sprite import Group
+import numpy as np
+
+#resources library
 
 class Game():
+
+        
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((800,800))
         pygame.display.set_caption("Code Wars")
+        self.__redbase = 
+        self.__bluebase =
+        self.dim
+        self.resource = np.zeros(self.dim)
+        self.robots = np.zeros(self.dim)
+        # 0 in self.robots means no robots
+        # 1 means one robot of red team
+        # 2 means one robot of blue team
+        # 3 means more than one robots(possible only on base) for team red
+        # 4 means more than one robots for team blue
+
 
     def run_game(self):
         while True:

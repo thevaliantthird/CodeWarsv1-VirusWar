@@ -6,9 +6,9 @@ class Base():
         self.type = type
         self.robot_list = robot_list
         if type == "red":
-            self.image = pygame.image.load(" red base image")
+            self.image = pygame.image.load("redbase.png")
         else:
-            self.image = pygame.image.load(" blue base image")
+            self.image = pygame.image.load("bluebase.png")
         self.rect = self.image.get_rect()
 
         self.rect.x = x

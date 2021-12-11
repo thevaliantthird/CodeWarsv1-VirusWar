@@ -6,6 +6,8 @@ class Robot(Sprite):
         super().__init__()
         self.screen = screen
         self.type = type
+        self.__myBase
+        self.Signal
         if type == "red":
             self.image = pygame.image.load(" red robot image")
         else:

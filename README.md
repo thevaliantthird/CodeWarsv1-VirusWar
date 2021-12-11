@@ -49,7 +49,9 @@ Robot class must have functions to:
 8. GetTotalElixir : the team's total elixir stock
 9. GetVirus : The team's total virus stock
 10. GetElixir : The robot's stock of Elixir
-11. GetPosition() : Returns z = 400x + y where (x,y) is your current co-ordinate. The x-co-ordinate can be got as z//400 and the y co-ordinate as z%400
+11. GetPosition() : (x,y)
+12. GetDimensionX()
+13. GetDimensionY()
 
 **Operator**
 
@@ -61,9 +63,11 @@ The operator class must have the following functions!
 2. CreateRobot(int signal) : create a robot with initial signal (integer)
 3. GetYourSignal() : get your own signal
 4. SetYourSignal() : Sets the operator signal
-5. InvestigateUp, investigateDOwn, Inver.Left, invesRight, investigateNw, investigaeNw.... : int : 0 : ,1,2
+5. InvestigateUp, investigateDOwn, Inver.Left, invesRight, investigateNw, investigateNw.... : int : 0 : ,1,2
 6. DeployVirus(float v): (tells us the amount of virus, it must be less than the total stock)
 7. GetTotalElixir : the team's total elixir stock
 8. GetVirus : The team's total virus stock
 9. GetElixir : The robot's stock of Elixir
-10. GetPosition() : Returns z = 400x + y where (x,y) is your current co-ordinate. The x-co-ordinate can be got as z//400 and the y co-ordinate as z%400
+10. GetPosition() : (x,y)
+11. GetDimensionX()
+12. GetDimensionY()

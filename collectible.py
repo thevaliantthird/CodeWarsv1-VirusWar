@@ -3,27 +3,24 @@ from pygame.sprite import Sprite
 
 class Collectible(Sprite):
     def __init__(self, screen, x, y, points):
+        super().__init__()
         self.screen = screen
         self.points = points
+        self.rect = (x, y, 20, 20)
+        self.color = (60,60,60)
         if points <-40:
-            self.image = pygame.load("dark virus image")
+            self.color = (240,240,250)
         elif points<-20:
-            self.image = pygame.load("moderate virus image")
+            self.color = (220,220,250)
         elif points<0:
-            self.image = pygame.load("ligth virus image")
+            self.color = (200,200,240)
         elif points == 0:
-            self.image = pygame.load("blank image")
+            self.color = (200,200,200)
         elif points < 20:
-            self.image = pygame.load("light elixir image")
+            self.color = (10,230, 10)
         elif points<40:
-            self.image = pygame.load("moderate elixir image")
+            self.color = (20, 230, 20)
         else:
-            self.image = pygame.load("strong elixir image")
-
-        self.rect = self.image.get_rect()
-
-        self.rect.x = x
-        self.rect.y = y
-
+            self.color = (50,200,50)
     def blitme(self):
-        self.screen.blit(self.image, self.rect)
+        pygame.draw.rect(self.screen, self.color,  self.rect)

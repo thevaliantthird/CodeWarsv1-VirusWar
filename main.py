@@ -2,6 +2,7 @@ import sys
 import pygame
 from pygame.sprite import Group
 import numpy as np
+from random import randint
 from base import Base
 from collectible import Collectible
 #resources library
@@ -13,6 +14,7 @@ class Game():
         pygame.init()
         self.screen = pygame.display.set_mode((800,800))
         pygame.display.set_caption("Code Wars")
+        self.fps_controller = pygame.time.Clock()
         self.dim = (40,40)
         self.resources = np.random.randint(-50, high=50, size = self.dim)
         self.resources[19][9] = 0
@@ -38,29 +40,35 @@ class Game():
         self.__bluebase = Base(self.screen, 580, 380, 'blue', self.__bluebots, self.robots,self)
 
 
+        for j in range(3):
+            self.__redbase.create_robot('')
+            self.__bluebase.create_robot('')
+
     def run_game(self):
         while True:
             self.screen.fill((60,60,60))
-            for robo in self.__bluebots:
-                n = self.next_move(robo)
-                if n == 1:
-                    robo.move_up()
-                elif n == 2:
-                    robo.move_down()
-                elif n == 3:
-                    robo.move_left()
-                elif n == 4:
-                    robo.move_right()
+            self.__redbase.create_robot('')
+            self.__bluebase.create_robot('')
             for robo in self.__redbots:
-                n = self.next_move(robo)
+                n = self.next_move()
                 if n == 1:
                     robo.move_up()
                 elif n == 2:
+                    robo.move_right()
+                elif n == 3:
                     robo.move_down()
+                elif n == 4:
+                    robo.move_right()
+            for robo in self.__bluebots:
+                n = self.next_move()
+                if n == 1:
+                    robo.move_up()
+                elif n == 2:
+                    robo.move_left()
                 elif n == 3:
                     robo.move_left()
                 elif n == 4:
-                    robo.move_right()
+                    robo.move_down()
             for collectible in self.collectibles:
                 collectible.blitme()
             self.__bluebase.blitme()
@@ -68,8 +76,11 @@ class Game():
             self.check_collisions()
             self.__bluebots.draw(self.screen)
             self.__redbots.draw(self.screen)
+            #print(self.PositionToRobot)
             pygame.display.flip()
             self.check_events()
+            self.update_score()
+            self.fps_controller.tick(2)
 
     def check_events(self):
         for event in pygame.event.get():
@@ -77,27 +88,38 @@ class Game():
                     sys.exit(0)
     
     def check_collisions(self):
-        for b_robo in self.__bluebots:
-            for r_robo in self.__redbots:
-                if b_robo.rect == r_robo.rect:
-                    if b_robo.selfElixir > r_robo.selfElixir:
-                        b_robo.selfElixir -= r_robo.selfElixir
-                        r_robo.kill()
-                    elif b_robo.selfElixir < r_robo.selfElixir:
-                        r_robo.selfElixir -= b_robo.selfElixir
-                        b_robo.kill()
-                    else:
-                        r_robo.kill()
-                        b_robo.kill()
-            for b_robo2 in self.__bluebots:
-                if b_robo != b_robo2 and b_robo.rect == b_robo2.rect and b_robo.rect != self.__bluebase:
-                    b_robo.selfElixir += b_robo2.selfElixir
-                    b_robo2.kill()
-        for r_robo in self.__redbots:
-            for r_robo2 in self.__redbots:
-                if r_robo != r_robo2 and  r_robo.rect == r_robo2.rect and r_robo.rect != self.__redbase:
-                    b_robo.selfElixir += b_robo2.selfElixir
-                    b_robo2.kill()
+       removals = pygame.sprite.groupcollide(self.__redbots, self.__bluebots, False, False)
+       #print(removals)
+       to_kill = set()
+       for b, r_list in removals.items():
+           #print(id(b))
+           for r in r_list:
+            #print(id(r))
+            if b.selfElixir > r.selfElixir:
+               b.selfElixir -= r.selfElixir
+               self.robots[r.rect.y//20][r.rect.x//20] = 2
+               to_kill.add(r)
+               self.__redbase.TotalTeamElixir -= r.selfElixir
+               self.__bluebase.TotalTeamElixir -= r.selfElixir
+               r.selfElixir = 0
+            elif b.selfElixir < r.selfElixir:
+                self.robots[r.rect.y//20][r.rect.x//20] = 1
+                r.selfElixir -= b.selfElixir
+                to_kill.add(b)
+                self.__bluebase.TotalTeamElixir -= b.selfElixir
+                self.__bluebase.TotalTeamElixir -= b.selfElixir
+                b.selfElixir = 0
+            else:
+                self.robots[r.rect.y//20][r.rect.x//20] = 0
+                to_kill.add(r)
+                to_kill.add(b)
+                self.__redbase.TotalTeamElixir -= r.selfElixir
+                self.__bluebase.TotalTeamElixir -= b.selfElixir
+                r.selfElixir = 0
+                b.selfElixir = 0
+       for a  in to_kill:
+            self.PositionToRobot[(a.rect.x//20, a.rect.y//20)].remove(a)
+            a.kill()
 
 
     def create_map(self):
@@ -110,11 +132,28 @@ class Game():
 
     def update_score(self):
         """Update scores in the scoreboard"""
+        print("Blue Team")
+        print("Total Elixir :" + str(self.__bluebase.TotalTeamElixir))
+        print("Self Elixir : " + str(self.__bluebase.SelfElixir))
+        print("No. of Robots: " +str(len(self.__bluebots)))
+
+        print("Red Team: ")
+        print("Total Elixir: "+ str(self.__redbase.TotalTeamElixir))
+        print("Self ELixir: " + str(self.__redbase.SelfElixir))
+        print("No. of Robots: " + str(len(self.__redbots)))
         
 
     def game_over(self):
         """Check conditions of game over"""
-
+        if self.__redbase.SelfElixir <= 0:
+            print( "Blue Wins")
+            sys.exit(0)
+        elif self.__bluebase.SelfElixir <= 0:
+            print("Red Wins")
+            sys.exit(0)
+            
+    def next_move(self):
+        return randint(1,4)
 
 game = Game()
 game.run_game()

@@ -8,8 +8,8 @@ class Base():
         self.robot_map = robot_map
         self.robot_list = robot_list
         self.__myGame = game
-        self.SelfElixir = 200
-        self.TotalTeamElixir = 200
+        self.SelfElixir = 2000
+        self.TotalTeamElixir = 2000
         self.TotalVirus = 0
 
         self.__Signal = ''
@@ -29,33 +29,33 @@ class Base():
             return
         if pos[1] < 0 or pos[1] >= g.dim[1]:
             return
-        if self.robots[pos[0],pos[1]]==0:
-            self.resource[pos[0,pos[1]]]+=v
+        if self.robot_map[pos[1]][pos[0]]==0:
+            g.resources[pos[1]][pos[0]]-= v
             return
-        if self.robots[pos[0],pos[1]]==1 and self==g.__redbase:
+        if self.robot_map[pos[1]][pos[0]]==1 and self ==g._Game__redbase:
             self.TotalVirus += v
             return
-        if self.robots[pos[0],pos[1]]==1 and self==g.__bluebase:
-            g.__bluebase(pos, v)
+        if self.robot_map[pos[1]][pos[0]]==1 and self==g._Game__bluebase:
+            g._Game__redbase.VirusOnRobot(pos, v)
             return
-        if self.robots[pos[0],pos[1]]==2 and self==g.__bluebase:
+        if self.robot_map[pos[1]][pos[0]]==2 and self==g._Game__bluebase:
             self.TotalVirus += v
             return
-        if self.robots[pos[0],pos[1]]==2 and self==g.__redbase:
-            g.__redbase.VirusOnRobot(pos, v)
+        if self.robot_map[pos[1]][pos[0]]==2 and self==g._Game__redbase:
+            g._Game__redbase.VirusOnRobot(pos, v)
             return
-        if self.robots[pos[0],pos[1]]==3 and self==g.__bluebase:
-            self.__myGame.__redbase.SelfElixir -= v
-            self.__myGame.__redbase.TotalTeamElixir -= v
+        if self.robot_map[pos[1]][pos[0]]==3 and self==g._Game__bluebase:
+            g._Game__redbase.SelfElixir -= v
+            g._Game__redbase.TotalTeamElixir -= v
             return
-        if self.robots[pos[0],pos[1]]==3 and self==g.__redbase:
+        if self.robot_map[pos[1]][pos[0]]==3 and self==g._Game__redbase:
             self.TotalVirus += v
             return
-        if self.robots[pos[0],pos[1]]==4 and self==g.__redbase:
-            self.__myGame.__bluebase.SelfElixir -= v
-            self.__myGame.__bluebase.TotalTeamElixir -= v
+        if self.robot_map[pos[1]][pos[0]]==4 and self==g._Game__redbase:
+            g._Game__bluebase.SelfElixir -= v
+            g._Game__bluebase.TotalTeamElixir -= v
             return
-        if self.robots[pos[0],pos[1]]==4 and self==g.__bluebase:
+        if self.robot_map[pos[1]][pos[0]]==4 and self==g._Game__bluebase:
             self.TotalVirus += v
             return
 
@@ -69,27 +69,31 @@ class Base():
         
     def VirusOnRobot(self, pos,virus):
         robot = self.PositionToRobot[pos]
-        if robot.__Elixir <= virus:
-            e = virus - robot.__Elixir
-            self.TotalTeamElixir -= robot.__Elixir
-            del self.__myGame.PositionToRobot[pos]
+        if robot.selfElixir <= virus:
+            e = virus - robot.selfElixir
+            self.TotalTeamElixir -= robot.selfElixir
+            self.__myGame.PositionToRobot[pos].remove(robot)
             robot.kill()
-            self.__myGame.resource[pos[0],pos[1]]+=e
+            self.robot_map[pos[1]][pos[0]]= 0
+            self.__myGame.resource[pos[1]][pos[0]]+=e
         else:
             self.TotalTeamElixir -= virus
-            robot.__Elixir-=virus
+            robot.selfElixir-=virus
             
     def create_robot(self, signal):
         if self.SelfElixir >= 50:
             self.SelfElixir -= 50
-            self.GlobalRobotCount += 1
-            robo = Robot(self.screen, self.rect.x, self.rect.y, self.type, signal, self,self.GlobalRobotCount)
+            #self.GlobalRobotCount += 1
+            robo = Robot(self.screen, self.rect.x, self.rect.y, self.type, signal, self)
             self.robot_list.add(robo)
-          #  self.__myGame[(self.rect.x, self.rect.y)].append(robo)
-            if self.type == 'red':
-                self.robot_map[self.rect.y/20][self.rect.x/20] = 3
+            if (self.rect.x//20, self.rect.y//20) in self.__myGame.PositionToRobot:
+                self.__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)].append(robo)
             else:
-                self.robot_map[self.rect.y/20][self.rect.x/20] = 4
+                self.__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)] = [robo]
+            if self.type == 'red':
+                self.robot_map[self.rect.y//20][self.rect.x//20] = 3
+            else:
+                self.robot_map[self.rect.y//20][self.rect.x//20] = 4
 
     def GetYourSignal(self):
         return self.__Signal
@@ -104,7 +108,7 @@ class Base():
         return self.TotalVirus
     
     def GetPosition(self):
-        return (self.rect.x/20,self.rect.y/20)
+        return (self.rect.x//20,self.rect.y//20)
     
     def GetDimensionX(self):
         return self.__myGame.dim[0]

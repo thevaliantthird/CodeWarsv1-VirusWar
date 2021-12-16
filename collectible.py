@@ -9,7 +9,7 @@ class Collectible(Sprite):
         self.points = points
         self.rect = (x, y, 20, 20)
         self.color = (60,60,60)
-        
+        self.setColor()
     def blitme(self):
         pygame.draw.rect(self.screen, self.color,  self.rect)
 

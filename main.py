@@ -2,7 +2,7 @@ import sys
 import pygame
 from pygame.sprite import Group
 import numpy as np
-from random import randint
+
 from base import Base
 from collectible import Collectible
 #resources library
@@ -20,13 +20,19 @@ class Game():
         self.resources[19][9] = 0
         self.resources[19][29] = 0
         self.GlobalRobotCount = 0
-        self.collectibles = Group()
+        
+
+        self.collectibles = []
+        
         self.PositionToRobot = {}
         for i in range(self.dim[0]):
+            Z = []
             for j in range(self.dim[1]):
-                collectible = Collectible(self.screen, j*20, i*20, self.resources[i][j])
-                self.collectibles.add(collectible) 
+                Z.append(Collectible(self.screen, i*20, j*20, self.resources[j][i]))
+            self.collectibles.append(Z)
         
+        
+
         self.__bluebots = Group()
         self.__redbots = Group()
         self.robots = np.zeros(self.dim)
@@ -38,19 +44,23 @@ class Game():
 
         self.__redbase = Base(self.screen, 180, 380, 'red', self.__redbots, self.robots,self)
         self.__bluebase = Base(self.screen, 580, 380, 'blue', self.__bluebots, self.robots,self)
-
+        self.PositionToRobot[(9,19)] = {self.__redbase:True}
+        self.PositionToRobot[(29,19)] = {self.__bluebase:True}
 
         for j in range(3):
             self.__redbase.create_robot('')
             self.__bluebase.create_robot('')
 
     def run_game(self):
+        iter = 0
         while True:
+            iter+=1
             self.screen.fill((60,60,60))
+            self.collect()
             self.__redbase.create_robot('')
             self.__bluebase.create_robot('')
             for robo in self.__redbots:
-                n = self.next_move()
+                n = robo.next_move()
                 if n == 1:
                     robo.move_up()
                 elif n == 2:
@@ -60,7 +70,7 @@ class Game():
                 elif n == 4:
                     robo.move_right()
             for robo in self.__bluebots:
-                n = self.next_move()
+                n = robo.next_move()
                 if n == 1:
                     robo.move_up()
                 elif n == 2:
@@ -69,26 +79,48 @@ class Game():
                     robo.move_left()
                 elif n == 4:
                     robo.move_down()
-            for collectible in self.collectibles:
-                collectible.blitme()
+            for i in range(0,self.dim[0]):
+                for j in range(0,self.dim[1]):
+                    self.collectibles[i][j].blitme()
+                
             self.__bluebase.blitme()
             self.__redbase.blitme()
             self.check_collisions()
+            self.updateRoboMap()
             self.__bluebots.draw(self.screen)
             self.__redbots.draw(self.screen)
             #print(self.PositionToRobot)
             pygame.display.flip()
             self.check_events()
             self.update_score()
+            if iter % 10 == 0:
+                self.replenish()
             self.fps_controller.tick(2)
-
+    def updateRoboMap(self):
+        self.robots = np.zeros((self.dim[1],self.dim[0])).astype(int)
+        for key in self.PositionToRobot.keys():
+            value = self.PositionToRobot[key]
+            entr = 0
+            for v in value:
+                if v==self.__redbase:
+                    entr = 3
+                    break
+                if v==self.__bluebase:
+                    entr = 4
+                    break
+                if v.type=="red":
+                    entr = 1
+                else:
+                    entr = 2
+            self.robots[key[1]][key[0]] = entr
+    
     def check_events(self):
         for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit(0)
     
     def check_collisions(self):
-       removals = pygame.sprite.groupcollide(self.__redbots, self.__bluebots, False, False)
+       removals = pygame.sprite.groupcollide(self.__bluebots, self.__redbots, False, False)
        #print(removals)
        to_kill = set()
        for b, r_list in removals.items():
@@ -117,17 +149,40 @@ class Game():
                 self.__bluebase.TotalTeamElixir -= b.selfElixir
                 r.selfElixir = 0
                 b.selfElixir = 0
-       for a  in to_kill:
-            self.PositionToRobot[(a.rect.x//20, a.rect.y//20)].remove(a)
+       for a in to_kill:
+            del self.PositionToRobot[(a.rect.x//20, a.rect.y//20)][a]
             a.kill()
 
 
     def create_map(self):
         """Take info about collectibles and create the map"""
 
+    def replenish(self):
+        for i in range(0,self.dim[0]):
+            for j in range(0,self.dim[1]):
+                # if self.collectibles[i][j].initPoints > 1e-5:
+                #     self.collectibles[i][j].points = min(self.collectibles[i][j].initPoints, self.collectibles[i][j].points*1.3)
+                if self.collectibles[i][j].initPoints < -1e-5:
+                    self.collectibles[i][j].points = max(self.collectibles[i][j].initPoints, self.collectibles[i][j].points*1.3)
+                self.resources[j][i] = self.collectibles[i][j].points
+                self.collectibles[i][j].setColor()
+
 
     def collect(self):
         """Take positions of robots and collectibles and check collisions"""
+        
+        for key in self.PositionToRobot.keys():
+            value = self.PositionToRobot[key]
+            if self.robots[key[1]][key[0]] == 1 or self.robots[key[1]][key[0]] == 2:
+                V = self.resources[key[1]][key[0]]/(2*len(value))
+                for v in value:
+                    v.addResource(V)
+                self.resources[key[1]][key[0]] /= 2
+                self.collectibles[key[0]][key[1]].points = self.resources[key[1]][key[0]]
+                self.collectibles[key[0]][key[1]].setColor()
+
+
+                
 
 
     def update_score(self):
@@ -152,8 +207,7 @@ class Game():
             print("Red Wins")
             sys.exit(0)
             
-    def next_move(self):
-        return randint(1,4)
+    
 
 game = Game()
 game.run_game()

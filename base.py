@@ -65,20 +65,27 @@ class Base():
             res.append(x.__Signal)
         return res
 
-    
+    def addResource(self, v):
+        if v < 0:
+            self.TotalVirus -= v
+        else:
+            self.SelfElixir += v
+            self.TotalTeamElixir += v
         
     def VirusOnRobot(self, pos,virus):
-        robot = self.PositionToRobot[pos]
-        if robot.selfElixir <= virus:
-            e = virus - robot.selfElixir
-            self.TotalTeamElixir -= robot.selfElixir
-            self.__myGame.PositionToRobot[pos].remove(robot)
-            robot.kill()
-            self.robot_map[pos[1]][pos[0]]= 0
-            self.__myGame.resource[pos[1]][pos[0]]+=e
-        else:
-            self.TotalTeamElixir -= virus
-            robot.selfElixir-=virus
+        robots = self.__myGame.PositionToRobot[pos]
+        virus /= len(robots)
+        for robot in robots:
+            if robot.selfElixir <= virus:
+                e = virus - robot.selfElixir
+                self.TotalTeamElixir -= robot.selfElixir
+                del self.__myGame.PositionToRobot[pos][robot]
+                robot.kill()
+                self.robot_map[pos[1]][pos[0]] = 0
+                self.__myGame.resource[pos[1]][pos[0]]+=e
+            else:
+                self.TotalTeamElixir -= virus
+                robot.selfElixir-=virus
             
     def create_robot(self, signal):
         if self.SelfElixir >= 50:
@@ -87,9 +94,10 @@ class Base():
             robo = Robot(self.screen, self.rect.x, self.rect.y, self.type, signal, self)
             self.robot_list.add(robo)
             if (self.rect.x//20, self.rect.y//20) in self.__myGame.PositionToRobot:
-                self.__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)].append(robo)
+                self.__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][robo] = True
             else:
-                self.__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)] = [robo]
+                self.__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)] = {}
+                self.__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][robo] = True
             if self.type == 'red':
                 self.robot_map[self.rect.y//20][self.rect.x//20] = 3
             else:

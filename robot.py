@@ -1,6 +1,6 @@
 import pygame
 from pygame.sprite import Sprite
-
+from random import randint
 class Robot(Sprite):
     def __init__(self, screen, x, y, type, signal, base):
         super().__init__()
@@ -20,32 +20,44 @@ class Robot(Sprite):
         self.rect.x = x
         self.rect.y = y
 
+    def next_move(self):
+        return randint(1,4)
+
     def blitme(self):
         self.screen.blit(self.image, self.rect)
 
     def move_up(self):
         if self.rect.y >0:
             self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
-            self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)].remove(self)
+            del self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
             self.rect.y -= 20
             if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame.PositionToRobot:
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)].append(self)
+                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
             else:
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)] = [self]
+                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)] = {}
+                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
             if self.type == 'red': 
                 self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 1
             else:
                 self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 2
 
+    def addResource(self, v):
+        if v < 0:
+            self.__myBase.TotalVirus -= v
+        else:
+            self.selfElixir += v
+            self.__myBase.TotalTeamElixir += v
+
     def move_down(self):
         if self.rect.y < 780:
             self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
-            self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)].remove(self)
+            del self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
             self.rect.y += 20
             if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame.PositionToRobot:
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)].append(self)
+                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
             else:
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)] = [self]
+                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)] = {}
+                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
             if self.type == 'red': 
                 self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 1
             else:
@@ -54,12 +66,13 @@ class Robot(Sprite):
     def move_left(self):
         if self.rect.x > 0:
             self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
-            self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)].remove(self)
+            del self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
             self.rect.x -= 20
             if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame.PositionToRobot:
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)].append(self)
+                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
             else:
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)] = [self]
+                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)] = {}
+                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
             if self.type == 'red': 
                 self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 1
             else:
@@ -68,12 +81,13 @@ class Robot(Sprite):
     def move_right(self):
         if self.rect.x < 780:
             self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
-            self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)].remove(self)
+            del self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
             self.rect.x += 20
             if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame.PositionToRobot:
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)].append(self)
+                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
             else:
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)] = [self]
+                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)] = {}
+                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
             if self.type == 'red': 
                 self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 1
             else:
@@ -223,16 +237,16 @@ class Robot(Sprite):
         return self.TotalVirus
 
     def GetElixir(self):
-        return self.___Elixir
+        return self.selfElixir
     
     def GetPosition(self):
         return (self.rect.x//20, self.rect.y//20)
     
     def GetDimensionX(self):
-        return self.__myBase.__myGame.dim[0]
+        return self.__myBase._Base__myGame.dim[0]
 
     def GetDimensionY(self):
-        return self.__myBase.__myGame.dim[1]
+        return self.__myBase._Base__myGame.dim[1]
 
     #def __hash__(self):
      #   return self.ID

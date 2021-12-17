@@ -13,7 +13,8 @@ class Game():
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((800,800))
-        pygame.display.set_caption("Code Wars")
+        self.score = pygame.display.set_mode((400, 800))
+        self.scoreboard = pygame.display.set_caption("Code Wars")
         self.fps_controller = pygame.time.Clock()
         self.dim = (40,40)
         self.resources = np.random.randint(-50, high=50, size = self.dim)

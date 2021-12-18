@@ -4,7 +4,7 @@ from pygame.sprite import Group
 import numpy as np
 import cv2
 import time
-
+import warnings 
 from base import Base
 from collectible import Collectible
 import script
@@ -25,7 +25,8 @@ class Game():
         self.resources[19][29] = 0
         self.GlobalRobotCount = 0
         self.explosion = pygame.image.load("explode.png")
-        self.rate = 10
+        self.virus = pygame.image.load("virus.png")
+        self.rate = 0.2
 
         self.collectibles = []
         
@@ -52,14 +53,13 @@ class Game():
         self.PositionToRobot[(9,19)] = {self.__redbase:True}
         self.PositionToRobot[(29,19)] = {self.__bluebase:True}
         self.update_score()
-
         for j in range(3):
             self.__redbase.create_robot('')
             self.__bluebase.create_robot('')
 
     def run_game(self):
         iter = 0
-        while True:
+        for j in range(2):
             iter+=1
             self.screen.fill((60,60,60))
             script.ActOperator(self.__bluebase)
@@ -87,7 +87,9 @@ class Game():
             self.__bluebase.blitme()
             self.__redbase.blitme()
             collisions  = self.check_collisions()
-            self.updateRoboMap()
+            self.robots[19][9] = 3
+            self.robots[19][29] = 4
+            #self.updateRoboMap()
             self.__bluebots.draw(self.screen)
             self.__redbots.draw(self.screen)
             for b in collisions.keys():
@@ -96,30 +98,14 @@ class Game():
             self.update_score()
             self.buttons()
             pygame.display.flip()
-            self.check_events()
+            
             if iter % 10 == 0:
                 self.replenish()
-            
-            
+            if iter == 2:
+                while True:
+                    self.check_events()
             self.fps_controller.tick(self.rate)
 
-    def updateRoboMap(self):
-        self.robots = np.zeros((self.dim[1],self.dim[0])).astype(int)
-        for key in self.PositionToRobot.keys():
-            value = self.PositionToRobot[key]
-            entr = 0
-            for v in value:
-                if v==self.__redbase:
-                    entr = 3
-                    break
-                if v==self.__bluebase:
-                    entr = 4
-                    break
-                if v.type=="red":
-                    entr = 1
-                else:
-                    entr = 2
-            self.robots[key[1]][key[0]] = entr
 
     def buttons(self):
         button_font = pygame.font.SysFont(None, 36)
@@ -212,7 +198,15 @@ class Game():
         for key in self.PositionToRobot.keys():
             value = self.PositionToRobot[key]
             if self.robots[key[1]][key[0]] == 1 or self.robots[key[1]][key[0]] == 2:
-                V = self.resources[key[1]][key[0]]/(2*len(value))
+                with warnings.catch_warnings():
+                    warnings.filterwarnings('error')
+                    try:
+                        V = self.resources[key[1]][key[0]]/(2*len(value))
+                    except Warning as e:
+                        print(key)
+                        print(value)
+                        print(self.robots[key[1]][key[0]])
+                
                 for v in value:
                     v.addResource(V)
                 self.resources[key[1]][key[0]] /= 2

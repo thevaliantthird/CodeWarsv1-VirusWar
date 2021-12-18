@@ -27,7 +27,8 @@ class Robot(Sprite):
 
     def move_up(self):
         if self.rect.y >0:
-            self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
+            if self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] != 3 or self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] != 4:
+                self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
             del self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
             self.rect.y -= 20
             if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame.PositionToRobot:
@@ -49,7 +50,8 @@ class Robot(Sprite):
 
     def move_down(self):
         if self.rect.y < 780:
-            self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
+            if self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] != 3 or self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] != 4:
+                self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
             del self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
             self.rect.y += 20
             if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame.PositionToRobot:
@@ -64,7 +66,8 @@ class Robot(Sprite):
 
     def move_left(self):
         if self.rect.x > 0:
-            self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
+            if self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] != 3 or self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] != 4:
+                self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
             del self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
             self.rect.x -= 20
             if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame.PositionToRobot:
@@ -95,16 +98,16 @@ class Robot(Sprite):
     def investigate_up(self):
         if self.rect.y == 0:
             return "wall"
-        elif self.robot_map[self.rect.y//20  - 1][self.rect.x//20] == 1 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20] == 3:
+        elif self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20] == 1 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20] == 3:
             if self.type == "red":
                 return "friend"
             else:
                 return "enemy"
-        elif self.robot_map[self.rect.y//20  - 1][self.rect.x//20] == 2 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20] == 4:
+        elif self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20] == 2 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20] == 4:
             if self.type == "red":
-                return "friend"
-            else:
                 return "enemy"
+            else:
+                return "friend"
         else:
             return "blank"
     
@@ -112,32 +115,32 @@ class Robot(Sprite):
     def investigate_down(self):
         if self.rect.y == 780:
             return "wall"
-        elif self.robot_map[self.rect.y//20  + 1][self.rect.x//20] == 1 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20] == 3:
+        elif self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20] == 1 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20] == 3:
             if self.type == "red":
                 return "friend"
             else:
                 return "enemy"
-        elif self.robot_map[self.rect.y//20  + 1][self.rect.x//20] == 2 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20] == 4:
+        elif self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20] == 2 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20] == 4:
             if self.type == "red":
-                return "friend"
-            else:
                 return "enemy"
+            else:
+                return "friend"
         else:
             return "blank"
     
     def investigate_left(self):
         if self.rect.x == 0:
             return "wall"
-        elif self.robot_map[self.rect.y//20][self.rect.x//20  - 1] == 1 or self.__myBase.robot_map[self.rect.y//20][self.rect.x//20 - 1] == 3:
+        elif self.__myBase.robot_map[self.rect.y//20][self.rect.x//20  - 1] == 1 or self.__myBase.robot_map[self.rect.y//20][self.rect.x//20 - 1] == 3:
             if self.type == "red":
                 return "friend"
             else:
                 return "enemy"
-        elif self.robot_map[self.rect.y//20][self.rect.x//20 - 1] == 2 or self.__myBase.robot_map[self.rect.y//20][self.rect.x//20 - 1] == 4:
+        elif self.__myBase.robot_map[self.rect.y//20][self.rect.x//20 - 1] == 2 or self.__myBase.robot_map[self.rect.y//20][self.rect.x//20 - 1] == 4:
             if self.type == "red":
-                return "friend"
-            else:
                 return "enemy"
+            else:
+                return "friend"
         else:
             return "blank"
 
@@ -145,65 +148,81 @@ class Robot(Sprite):
     def investigate_right(self):
         if self.rect.x == 780:
             return "wall"
-        elif self.robot_map[self.rect.y//20][self.rect.x//20 + 1] == 1 or self.__myBase.robot_map[self.rect.y//20][self.rect.x//20 + 1] == 3:
+        elif self.__myBase.robot_map[self.rect.y//20][self.rect.x//20 + 1] == 1 or self.__myBase.robot_map[self.rect.y//20][self.rect.x//20 + 1] == 3:
             if self.type == "red":
                 return "friend"
             else:
                 return "enemy"
-        elif self.robot_map[self.rect.y//20][self.rect.x//20 + 1] == 2 or self.__myBase.robot_map[self.rect.y//20][self.rect.x//20 + 1] == 4:
+        elif self.__myBase.robot_map[self.rect.y//20][self.rect.x//20 + 1] == 2 or self.__myBase.robot_map[self.rect.y//20][self.rect.x//20 + 1] == 4:
             if self.type == "red":
-                return "friend"
-            else:
                 return "enemy"
+            else:
+                return "friend"
         else:
             return "blank"
 
     
-    def investigate_nw(self):
+    def investigate_ne(self):
         if self.rect.x == 780 or self.rect.y == 0:
             return "wall"
-        elif self.robot_map[self.rect.y//20  - 1][self.rect.x//20 + 1] == 1 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 + 1] == 3:
+        elif self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 + 1] == 1 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 + 1] == 3:
             if self.type == "red":
                 return "friend"
             else:
                 return "enemy"
-        elif self.robot_map[self.rect.y//20  - 1][self.rect.x//20 + 1] == 2 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 + 1] == 4:
+        elif self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 + 1] == 2 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 + 1] == 4:
             if self.type == "red":
-                return "friend"
-            else:
                 return "enemy"
+            else:
+                return "friend"
         else:
             return "blank"
 
-    def investigate_ne(self):
+    def investigate_nw(self):
         if self.rect.x == 0 or self.rect.y == 0:
             return "wall"
-        elif self.robot_map[self.rect.y//20  - 1][self.rect.x// - 1] == 1 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 - 1] == 3:
+        elif self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 - 1] == 1 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 - 1] == 3:
             if self.type == "red":
                 return "friend"
             else:
                 return "enemy"
-        elif self.robot_map[self.rect.y//20  - 1][self.rect.x//20 - 1] == 2 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 - 1] == 4:
+        elif self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 - 1] == 2 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 - 1] == 4:
+            if self.type == "red":
+                return "enemy"
+            else:
+                return "friend"
+        else:
+            return "blank"
+
+    def investigate_se(self):
+        if self.rect.x == 780 or self.rect.y == 780:
+            return "wall"
+        elif self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 + 1] == 1 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 + 1] == 3:
             if self.type == "red":
                 return "friend"
             else:
                 return "enemy"
+        elif self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 + 1] == 2 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 + 1] == 4:
+            if self.type == "red":
+                return "enemy"
+            else:
+                return "friend"
         else:
             return "blank"
 
     def investigate_sw(self):
-        if self.rect.x == 780 or self.rect.y == 780:
+        if self.rect.x == 0:
             return "wall"
-        elif self.robot_map[self.rect.y//20  + 1][self.rect.x//20 + 1] == 1 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 + 1] == 3:
+        elif self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 - 1] == 1 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 - 1] == 3:
             if self.type == "red":
                 return "friend"
             else:
                 return "enemy"
-        elif self.robot_map[self.rect.y//20  + 1][self.rect.x//20 + 1] == 2 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 + 1] == 4:
+        elif self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 - 1] == 2 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 - 1] == 4:
             if self.type == "red":
-                return "friend"
-            else:
                 return "enemy"
+            else:
+                return "friend"
         else:
             return "blank"
 
@@ -219,6 +238,7 @@ class Robot(Sprite):
         self.__myBase.actVirus(v/8,(self.rect.x//20,self.rect.y//20+1))
         self.__myBase.actVirus(v/8,(self.rect.x//20,self.rect.y//20-1))
         
+
     def setSignal(self, sig):
         self.__Signal = sig
     
@@ -252,18 +272,4 @@ class Robot(Sprite):
     #def __hash__(self):
      #   return self.ID
 
-    def investigate_se(self):
-        if self.rect.x == 0:
-            return "wall"
-        elif self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 - 1] == 1 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 - 1] == 3:
-            if self.type == "red":
-                return "friend"
-            else:
-                return "enemy"
-        elif self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 - 1] == 2 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 - 1] == 4:
-            if self.type == "red":
-                return "friend"
-            else:
-                return "enemy"
-        else:
-            return "blank"
+    

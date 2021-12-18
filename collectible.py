@@ -15,16 +15,16 @@ class Collectible(Sprite):
 
     def setColor(self):
         if self.points <-40:
-            self.color = (240,240,250)
+            self.color = (32, 0, 84)
         elif self.points<-20:
-            self.color = (220,220,250)
+            self.color = (108, 0, 171)
         elif self.points<0:
-            self.color = (200,200,240)
+            self.color = (201, 84, 255)
         elif self.points == 0:
-            self.color = (200,200,200)
+            self.color = (240, 240, 240)
         elif self.points < 20:
-            self.color = (10,230, 10)
+            self.color = (252, 243, 61)
         elif self.points<40:
-            self.color = (20, 230, 20)
+            self.color = (200, 235, 0)
         else:
-            self.color = (50,200,50)
+            self.color = (77, 255, 0)

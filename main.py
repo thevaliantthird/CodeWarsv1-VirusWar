@@ -26,7 +26,7 @@ class Game():
         self.GlobalRobotCount = 0
         self.explosion = pygame.image.load("explode.png")
         self.virus = pygame.image.load("virus.png")
-        self.rate = 0.2
+        self.rate = 10
 
         self.collectibles = []
         
@@ -59,7 +59,7 @@ class Game():
 
     def run_game(self):
         iter = 0
-        for j in range(2):
+        while True:
             iter+=1
             self.screen.fill((60,60,60))
             script.ActOperator(self.__bluebase)
@@ -101,9 +101,7 @@ class Game():
             
             if iter % 10 == 0:
                 self.replenish()
-            if iter == 2:
-                while True:
-                    self.check_events()
+            self.check_events()
             self.fps_controller.tick(self.rate)
 
 

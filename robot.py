@@ -207,6 +207,7 @@ class Robot(Sprite):
                 return "enemy"
         else:
             return "blank"
+
     def DeployVirus(self, v):
         if v < self.__myBase.TotalVirus:
             return
@@ -218,6 +219,7 @@ class Robot(Sprite):
         self.__myBase.actVirus(v/8,(self.rect.x//20+1,self.rect.y//20-1))
         self.__myBase.actVirus(v/8,(self.rect.x//20,self.rect.y//20+1))
         self.__myBase.actVirus(v/8,(self.rect.x//20,self.rect.y//20-1))
+        
     def setSignal(self, sig):
         self.__Signal = sig
     

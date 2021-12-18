@@ -25,7 +25,7 @@ class Game():
         self.resources[19][29] = 0
         self.GlobalRobotCount = 0
         self.explosion = pygame.image.load("explode.png")
-
+        self.rate = 10
 
         self.collectibles = []
         
@@ -62,48 +62,24 @@ class Game():
         while True:
             iter+=1
             self.screen.fill((60,60,60))
-<<<<<<< HEAD
-            self.__redbase.create_robot('')
-            self.__bluebase.create_robot('')
-            moves = {}
-            for robo in self.__redbots:
-                n = robo.next_move()
-                moves[robo] = n
-            for robo in self.__bluebots:
-                n = robo.next_move()
-                moves[robo] = n
-            for robo, n in moves.items():
-=======
-            self.collect()
             script.ActOperator(self.__bluebase)
             script.ActOperator(self.__redbase)
+            moves = {}
             for robo in self.__redbots:
                 n = script.ActRobot(robo)
-                if n == 1:
-                    robo.move_up()
-                elif n == 2:
-                    robo.move_right()
-                elif n == 3:
-                    robo.move_down()
-                elif n == 4:
-                    robo.move_right()
+                moves[robo] = n
             for robo in self.__bluebots:
                 n = script.ActRobot(robo)
->>>>>>> 0acac2e546af771338c796bc2a53c62937208c45
+                moves[robo] = n
+            for robo, n in moves.items():
                 if n == 1:
                     robo.move_up()
                 elif n == 2:
-                    if robo.type == "blue":
-                        robo.move_left()
-                    else:
-                        robo.move_right()
+                    robo.move_right()
                 elif n == 3:
-                    if robo.type == "blue":
-                        robo.move_left()
-                    else:
-                        robo.move_right()
-                elif n == 4:
                     robo.move_down()
+                elif n == 4:
+                    robo.move_left()
             self.collect()
             for i in range(0,self.dim[0]):
                 for j in range(0,self.dim[1]):
@@ -118,13 +94,14 @@ class Game():
                 self.screen.blit(self.explosion, b.rect)
             #print(self.PositionToRobot)
             self.update_score()
+            self.buttons()
             pygame.display.flip()
             self.check_events()
             if iter % 10 == 0:
                 self.replenish()
             
             
-            self.fps_controller.tick(2)
+            self.fps_controller.tick(self.rate)
 
     def updateRoboMap(self):
         self.robots = np.zeros((self.dim[1],self.dim[0])).astype(int)
@@ -143,11 +120,36 @@ class Game():
                 else:
                     entr = 2
             self.robots[key[1]][key[0]] = entr
-    
+
+    def buttons(self):
+        button_font = pygame.font.SysFont(None, 36)
+        slow_down = button_font.render("Slower", True, (230,230,230))
+        self.slow_rect = slow_down.get_rect()
+        self.slow_rect.center = (860, 655)
+        self.slow_rect.width += 20
+        self.slow_rect.height += 20
+        pygame.draw.rect(self.screen, (20,20,20),  self.slow_rect)
+        self.screen.blit(slow_down, (830, 650))
+
+        speed_up = button_font.render("Faster", True, (230,230,230))
+        self.fast_rect = speed_up.get_rect()
+        self.fast_rect.center = (1060, 655)
+        self.fast_rect.width += 20
+        self.fast_rect.height += 20
+        pygame.draw.rect(self.screen, (20,20,20),  self.fast_rect)
+        self.screen.blit(speed_up, (1030, 650))
+
     def check_events(self):
         for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit(0)
+                
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse = pygame.mouse.get_pos()
+                    if self.slow_rect.x <= mouse[0] <= self.slow_rect.x + self.slow_rect.width and self.slow_rect.y <= mouse[1] <= self.slow_rect.y + self.slow_rect.height and self.rate>2:
+                        self.rate -= 2
+                    elif self.fast_rect.x <= mouse[0] <= self.fast_rect.x + self.fast_rect.width and self.fast_rect.y <= mouse[1] <= self.fast_rect.y + self.slow_rect.height:
+                        self.rate += 2
     
     def check_collisions(self):
         removals = pygame.sprite.groupcollide(self.__bluebots, self.__redbots, False, False)
@@ -252,11 +254,6 @@ class Game():
         self.screen.blit(red_self, (850, 480))
         self.screen.blit(red_robots, (850, 520))
         self.screen.blit(red_virus, (850, 560))
-
-        print("Red Team: ")
-        print("Total Elixir: "+ str(self.__redbase.TotalTeamElixir))
-        print("Self ELixir: " + str(self.__redbase.SelfElixir))
-        print("No. of Robots: " + str(len(self.__redbots)))
         
 
     def game_over(self):

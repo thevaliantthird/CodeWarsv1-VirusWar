@@ -133,7 +133,7 @@ class Game():
 
         speed_up = button_font.render("Faster", True, (230,230,230))
         self.fast_rect = speed_up.get_rect()
-        self.fast_rect.center = (1060, 655)
+        self.fast_rect.center = (1058, 655)
         self.fast_rect.width += 20
         self.fast_rect.height += 20
         pygame.draw.rect(self.screen, (20,20,20),  self.fast_rect)

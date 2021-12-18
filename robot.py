@@ -27,8 +27,7 @@ class Robot(Sprite):
 
     def move_up(self):
         if self.rect.y >0:
-            if self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] != 3 or self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] != 4:
-                self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
+            #self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
             del self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
             self.rect.y -= 20
             if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame.PositionToRobot:
@@ -50,8 +49,7 @@ class Robot(Sprite):
 
     def move_down(self):
         if self.rect.y < 780:
-            if self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] != 3 or self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] != 4:
-                self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
+            #self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
             del self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
             self.rect.y += 20
             if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame.PositionToRobot:
@@ -66,8 +64,7 @@ class Robot(Sprite):
 
     def move_left(self):
         if self.rect.x > 0:
-            if self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] != 3 or self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] != 4:
-                self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
+            #self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
             del self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
             self.rect.x -= 20
             if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame.PositionToRobot:
@@ -82,7 +79,7 @@ class Robot(Sprite):
 
     def move_right(self):
         if self.rect.x < 780:
-            self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
+            #self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
             del self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
             self.rect.x += 20
             if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame.PositionToRobot:
@@ -99,6 +96,7 @@ class Robot(Sprite):
         if self.rect.y == 0:
             return "wall"
         elif self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20] == 1 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20] == 3:
+            print("up run")
             if self.type == "red":
                 return "friend"
             else:
@@ -116,6 +114,7 @@ class Robot(Sprite):
         if self.rect.y == 780:
             return "wall"
         elif self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20] == 1 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20] == 3:
+            print("down run")
             if self.type == "red":
                 return "friend"
             else:

@@ -7,6 +7,7 @@ import time
 
 from base import Base
 from collectible import Collectible
+import script
 #resources library
 
 class Game():
@@ -61,6 +62,7 @@ class Game():
         while True:
             iter+=1
             self.screen.fill((60,60,60))
+<<<<<<< HEAD
             self.__redbase.create_robot('')
             self.__bluebase.create_robot('')
             moves = {}
@@ -71,6 +73,23 @@ class Game():
                 n = robo.next_move()
                 moves[robo] = n
             for robo, n in moves.items():
+=======
+            self.collect()
+            script.ActOperator(self.__bluebase)
+            script.ActOperator(self.__redbase)
+            for robo in self.__redbots:
+                n = script.ActRobot(robo)
+                if n == 1:
+                    robo.move_up()
+                elif n == 2:
+                    robo.move_right()
+                elif n == 3:
+                    robo.move_down()
+                elif n == 4:
+                    robo.move_right()
+            for robo in self.__bluebots:
+                n = script.ActRobot(robo)
+>>>>>>> 0acac2e546af771338c796bc2a53c62937208c45
                 if n == 1:
                     robo.move_up()
                 elif n == 2:

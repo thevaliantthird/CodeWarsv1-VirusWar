@@ -20,8 +20,7 @@ class Robot(Sprite):
         self.rect.x = x
         self.rect.y = y
 
-    def next_move(self):
-        return randint(1,4)
+    
 
     def blitme(self):
         self.screen.blit(self.image, self.rect)

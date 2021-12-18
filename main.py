@@ -5,6 +5,7 @@ import numpy as np
 
 from base import Base
 from collectible import Collectible
+import script
 #resources library
 
 class Game():
@@ -57,10 +58,10 @@ class Game():
             iter+=1
             self.screen.fill((60,60,60))
             self.collect()
-            self.__redbase.create_robot('')
-            self.__bluebase.create_robot('')
+            script.ActOperator(self.__bluebase)
+            script.ActOperator(self.__redbase)
             for robo in self.__redbots:
-                n = robo.next_move()
+                n = script.ActRobot(robo)
                 if n == 1:
                     robo.move_up()
                 elif n == 2:
@@ -70,7 +71,7 @@ class Game():
                 elif n == 4:
                     robo.move_right()
             for robo in self.__bluebots:
-                n = robo.next_move()
+                n = script.ActRobot(robo)
                 if n == 1:
                     robo.move_up()
                 elif n == 2:

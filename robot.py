@@ -7,7 +7,7 @@ class Robot(Sprite):
         self.screen = screen
         self.type = type
         self.__myBase = base
-        self.selfElixir = 50
+        self.__selfElixir = 50
         self.__Signal = 0
         # Integer less than 2^31 -1
         self.__Initialsignal = signal
@@ -28,80 +28,92 @@ class Robot(Sprite):
     def move_up(self):
         if self.rect.y >0:
             #self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
-            del self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
+            try:
+                del self.__myBase._Base__myGame._Game__PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
+            except:
+                return
             self.rect.y -= 20
-            if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame.PositionToRobot:
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
+            if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame._Game__PositionToRobot:
+                self.__myBase._Base__myGame._Game__PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
             else:
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)] = {}
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
+                self.__myBase._Base__myGame._Game__PositionToRobot[(self.rect.x//20, self.rect.y//20)] = {}
+                self.__myBase._Base__myGame._Game__PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
             if self.type == 'red': 
-                self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 1
+                self.__myBase._Base__robot_map[self.rect.y//20][self.rect.x//20] = 1
             else:
-                self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 2
+                self.__myBase._Base__robot_map[self.rect.y//20][self.rect.x//20] = 2
 
     def addResource(self, v):
         if v < 0:
-            self.__myBase.TotalVirus -= v
+            self.__myBase._Base__TotalVirus -= v
         else:
-            self.selfElixir += v
-            self.__myBase.TotalTeamElixir += v
+            self.__selfElixir += v
+            self.__myBase._Base__TotalTeamElixir += v
 
     def move_down(self):
         if self.rect.y < 780:
             #self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
-            del self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
+            try:
+                del self.__myBase._Base__myGame._Game__PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
+            except:
+                return
             self.rect.y += 20
-            if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame.PositionToRobot:
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
+            if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame._Game__PositionToRobot:
+                self.__myBase._Base__myGame._Game__PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
             else:
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)] = {}
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
+                self.__myBase._Base__myGame._Game__PositionToRobot[(self.rect.x//20, self.rect.y//20)] = {}
+                self.__myBase._Base__myGame._Game__PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
             if self.type == 'red': 
-                self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 1
+                self.__myBase._Base__robot_map[self.rect.y//20][self.rect.x//20] = 1
             else:
-                self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 2
+                self.__myBase._Base__robot_map[self.rect.y//20][self.rect.x//20] = 2
 
     def move_left(self):
         if self.rect.x > 0:
             #self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
-            del self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
+            try:
+                del self.__myBase._Base__myGame._Game__PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
+            except:
+                return
             self.rect.x -= 20
-            if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame.PositionToRobot:
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
+            if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame._Game__PositionToRobot:
+                self.__myBase._Base__myGame._Game__PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
             else:
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)] = {}
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
+                self.__myBase._Base__myGame._Game__PositionToRobot[(self.rect.x//20, self.rect.y//20)] = {}
+                self.__myBase._Base__myGame._Game__PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
             if self.type == 'red': 
-                self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 1
+                self.__myBase._Base__robot_map[self.rect.y//20][self.rect.x//20] = 1
             else:
-                self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 2
+                self.__myBase._Base__robot_map[self.rect.y//20][self.rect.x//20] = 2
 
     def move_right(self):
         if self.rect.x < 780:
             #self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
-            del self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
+            try: 
+                del self.__myBase._Base__myGame._Game__PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
+            except:
+                return
             self.rect.x += 20
-            if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame.PositionToRobot:
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
+            if (self.rect.x//20, self.rect.y//20) in self.__myBase._Base__myGame._Game__PositionToRobot:
+                self.__myBase._Base__myGame._Game__PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
             else:
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)] = {}
-                self.__myBase._Base__myGame.PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
+                self.__myBase._Base__myGame._Game__PositionToRobot[(self.rect.x//20, self.rect.y//20)] = {}
+                self.__myBase._Base__myGame._Game__PositionToRobot[(self.rect.x//20, self.rect.y//20)][self] = True
             if self.type == 'red': 
-                self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 1
+                self.__myBase._Base__robot_map[self.rect.y//20][self.rect.x//20] = 1
             else:
-                self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 2
+                self.__myBase._Base__robot_map[self.rect.y//20][self.rect.x//20] = 2
 
     def investigate_up(self):
         if self.rect.y == 0:
             return "wall"
-        elif self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20] == 1 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20] == 3:
+        elif self.__myBase._Base__robot_map[self.rect.y//20  - 1][self.rect.x//20] == 1 or self.__myBase._Base__robot_map[self.rect.y//20  - 1][self.rect.x//20] == 3:
             print("up run")
             if self.type == "red":
                 return "friend"
             else:
                 return "enemy"
-        elif self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20] == 2 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20] == 4:
+        elif self.__myBase._Base__robot_map[self.rect.y//20  - 1][self.rect.x//20] == 2 or self.__myBase._Base__robot_map[self.rect.y//20  - 1][self.rect.x//20] == 4:
             if self.type == "red":
                 return "enemy"
             else:
@@ -113,13 +125,13 @@ class Robot(Sprite):
     def investigate_down(self):
         if self.rect.y == 780:
             return "wall"
-        elif self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20] == 1 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20] == 3:
+        elif self.__myBase._Base__robot_map[self.rect.y//20  + 1][self.rect.x//20] == 1 or self.__myBase._Base__robot_map[self.rect.y//20  + 1][self.rect.x//20] == 3:
             print("down run")
             if self.type == "red":
                 return "friend"
             else:
                 return "enemy"
-        elif self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20] == 2 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20] == 4:
+        elif self.__myBase._Base__robot_map[self.rect.y//20  + 1][self.rect.x//20] == 2 or self.__myBase._Base__robot_map[self.rect.y//20  + 1][self.rect.x//20] == 4:
             if self.type == "red":
                 return "enemy"
             else:
@@ -130,12 +142,12 @@ class Robot(Sprite):
     def investigate_left(self):
         if self.rect.x == 0:
             return "wall"
-        elif self.__myBase.robot_map[self.rect.y//20][self.rect.x//20  - 1] == 1 or self.__myBase.robot_map[self.rect.y//20][self.rect.x//20 - 1] == 3:
+        elif self.__myBase._Base__robot_map[self.rect.y//20][self.rect.x//20  - 1] == 1 or self.__myBase._Base__robot_map[self.rect.y//20][self.rect.x//20 - 1] == 3:
             if self.type == "red":
                 return "friend"
             else:
                 return "enemy"
-        elif self.__myBase.robot_map[self.rect.y//20][self.rect.x//20 - 1] == 2 or self.__myBase.robot_map[self.rect.y//20][self.rect.x//20 - 1] == 4:
+        elif self.__myBase._Base__robot_map[self.rect.y//20][self.rect.x//20 - 1] == 2 or self.__myBase._Base__robot_map[self.rect.y//20][self.rect.x//20 - 1] == 4:
             if self.type == "red":
                 return "enemy"
             else:
@@ -147,12 +159,12 @@ class Robot(Sprite):
     def investigate_right(self):
         if self.rect.x == 780:
             return "wall"
-        elif self.__myBase.robot_map[self.rect.y//20][self.rect.x//20 + 1] == 1 or self.__myBase.robot_map[self.rect.y//20][self.rect.x//20 + 1] == 3:
+        elif self.__myBase._Base__robot_map[self.rect.y//20][self.rect.x//20 + 1] == 1 or self.__myBase._Base__robot_map[self.rect.y//20][self.rect.x//20 + 1] == 3:
             if self.type == "red":
                 return "friend"
             else:
                 return "enemy"
-        elif self.__myBase.robot_map[self.rect.y//20][self.rect.x//20 + 1] == 2 or self.__myBase.robot_map[self.rect.y//20][self.rect.x//20 + 1] == 4:
+        elif self.__myBase._Base__robot_map[self.rect.y//20][self.rect.x//20 + 1] == 2 or self.__myBase._Base__robot_map[self.rect.y//20][self.rect.x//20 + 1] == 4:
             if self.type == "red":
                 return "enemy"
             else:
@@ -164,12 +176,12 @@ class Robot(Sprite):
     def investigate_ne(self):
         if self.rect.x == 780 or self.rect.y == 0:
             return "wall"
-        elif self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 + 1] == 1 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 + 1] == 3:
+        elif self.__myBase._Base__robot_map[self.rect.y//20  - 1][self.rect.x//20 + 1] == 1 or self.__myBase._Base__robot_map[self.rect.y//20  - 1][self.rect.x//20 + 1] == 3:
             if self.type == "red":
                 return "friend"
             else:
                 return "enemy"
-        elif self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 + 1] == 2 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 + 1] == 4:
+        elif self.__myBase._Base__robot_map[self.rect.y//20  - 1][self.rect.x//20 + 1] == 2 or self.__myBase._Base__robot_map[self.rect.y//20  - 1][self.rect.x//20 + 1] == 4:
             if self.type == "red":
                 return "enemy"
             else:
@@ -180,12 +192,12 @@ class Robot(Sprite):
     def investigate_nw(self):
         if self.rect.x == 0 or self.rect.y == 0:
             return "wall"
-        elif self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 - 1] == 1 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 - 1] == 3:
+        elif self.__myBase._Base__robot_map[self.rect.y//20  - 1][self.rect.x//20 - 1] == 1 or self.__myBase._Base__robot_map[self.rect.y//20  - 1][self.rect.x//20 - 1] == 3:
             if self.type == "red":
                 return "friend"
             else:
                 return "enemy"
-        elif self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 - 1] == 2 or self.__myBase.robot_map[self.rect.y//20  - 1][self.rect.x//20 - 1] == 4:
+        elif self.__myBase._Base__robot_map[self.rect.y//20  - 1][self.rect.x//20 - 1] == 2 or self.__myBase._Base__robot_map[self.rect.y//20  - 1][self.rect.x//20 - 1] == 4:
             if self.type == "red":
                 return "enemy"
             else:
@@ -196,12 +208,12 @@ class Robot(Sprite):
     def investigate_se(self):
         if self.rect.x == 780 or self.rect.y == 780:
             return "wall"
-        elif self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 + 1] == 1 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 + 1] == 3:
+        elif self.__myBase._Base__robot_map[self.rect.y//20  + 1][self.rect.x//20 + 1] == 1 or self.__myBase._Base__robot_map[self.rect.y//20  + 1][self.rect.x//20 + 1] == 3:
             if self.type == "red":
                 return "friend"
             else:
                 return "enemy"
-        elif self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 + 1] == 2 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 + 1] == 4:
+        elif self.__myBase._Base__robot_map[self.rect.y//20  + 1][self.rect.x//20 + 1] == 2 or self.__myBase._Base__robot_map[self.rect.y//20  + 1][self.rect.x//20 + 1] == 4:
             if self.type == "red":
                 return "enemy"
             else:
@@ -212,12 +224,12 @@ class Robot(Sprite):
     def investigate_sw(self):
         if self.rect.x == 0:
             return "wall"
-        elif self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 - 1] == 1 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 - 1] == 3:
+        elif self.__myBase._Base__robot_map[self.rect.y//20  + 1][self.rect.x//20 - 1] == 1 or self.__myBase._Base__robot_map[self.rect.y//20  + 1][self.rect.x//20 - 1] == 3:
             if self.type == "red":
                 return "friend"
             else:
                 return "enemy"
-        elif self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 - 1] == 2 or self.__myBase.robot_map[self.rect.y//20  + 1][self.rect.x//20 - 1] == 4:
+        elif self.__myBase._Base__robot_map[self.rect.y//20  + 1][self.rect.x//20 - 1] == 2 or self.__myBase._Base__robot_map[self.rect.y//20  + 1][self.rect.x//20 - 1] == 4:
             if self.type == "red":
                 return "enemy"
             else:
@@ -226,8 +238,9 @@ class Robot(Sprite):
             return "blank"
 
     def DeployVirus(self, v):
-        if v < self.__myBase.TotalVirus:
+        if v > self.__myBase._Base__TotalVirus:
             return
+        self.__myBase._Base__TotalVirus -= v    
         self.__myBase.actVirus(v/8,(self.rect.x//20-1,self.rect.y//20))
         self.__myBase.actVirus(v/8,(self.rect.x//20+1,self.rect.y//20))
         self.__myBase.actVirus(v/8,(self.rect.x//20-1,self.rect.y//20+1))
@@ -248,25 +261,25 @@ class Robot(Sprite):
         return self.__Signal
     
     def GetCurrentBaseSignal(self):
-        return self.__myBase.__Signal
+        return self.__myBase._Base__Signal
     
     def GetTotalElixir(self):
-        return self.__myBase.TotalTeamElixir
+        return self.__myBase._Base__TotalTeamElixir
     
     def GetVirus(self):
-        return self.TotalVirus
+        return self.__myBase._Base__TotalVirus
 
     def GetElixir(self):
-        return self.selfElixir
+        return self.__selfElixir
     
     def GetPosition(self):
         return (self.rect.x//20, self.rect.y//20)
     
     def GetDimensionX(self):
-        return self.__myBase._Base__myGame.dim[0]
+        return self.__myBase._Base__myGame.__dim[0]
 
     def GetDimensionY(self):
-        return self.__myBase._Base__myGame.dim[1]
+        return self.__myBase._Base__myGame.__dim[1]
 
     #def __hash__(self):
      #   return self.ID

@@ -250,6 +250,9 @@ class Robot(Sprite):
         
 
     def setSignal(self, sig):
+        str = 'wncc'
+        if type(sig)!=type(str) or len(sig) > 20:
+            return
         self.__Signal = sig
     
     def GetInitialSignal(self):

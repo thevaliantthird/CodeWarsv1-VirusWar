@@ -95,6 +95,9 @@ class Base():
             del self.__myGame._Game__PositionToRobot[pos][d]
     def create_robot(self, signal):
         if self.__SelfElixir >= 50:
+            str = 'wncc'
+            if type(signal)!=type(str) or len(signal) > 20:
+                signal = ''
             self.__SelfElixir -= 50
             #self.GlobalRobotCount += 1
             robo = Robot(self.screen, self.rect.x, self.rect.y, self.type, signal, self)
@@ -246,6 +249,9 @@ class Base():
         return self.__Signal
     
     def SetYoutSignal(self, s):
+        str = 'wncc'
+        if type(s)!=type(str) or len(s) > 20:
+            return
         self.__Signal = s
     def GetTotalElixir(self):
         return self.__TotalTeamElixir

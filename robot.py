@@ -108,7 +108,6 @@ class Robot(Sprite):
         if self.rect.y == 0:
             return "wall"
         elif self.__myBase._Base__robot_map[self.rect.y//20  - 1][self.rect.x//20] == 1 or self.__myBase._Base__robot_map[self.rect.y//20  - 1][self.rect.x//20] == 3:
-            print("up run")
             if self.type == "red":
                 return "friend"
             else:
@@ -126,7 +125,6 @@ class Robot(Sprite):
         if self.rect.y == 780:
             return "wall"
         elif self.__myBase._Base__robot_map[self.rect.y//20  + 1][self.rect.x//20] == 1 or self.__myBase._Base__robot_map[self.rect.y//20  + 1][self.rect.x//20] == 3:
-            print("down run")
             if self.type == "red":
                 return "friend"
             else:

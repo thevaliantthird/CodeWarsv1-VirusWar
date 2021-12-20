@@ -238,7 +238,7 @@ class Robot(Sprite):
             return "blank"
 
     def DeployVirus(self, v):
-        if v > self.__myBase._Base__TotalVirus:
+        if v > self.__myBase._Base__TotalVirus or v <= 0:
             return
         self.__myBase._Base__TotalVirus -= v    
         self.__myBase.actVirus(v/8,(self.rect.x//20-1,self.rect.y//20))

@@ -1,4 +1,4 @@
-# CodeOmicron
+# CodeWars v1
 
 WnCC's Freshie Orientation
 

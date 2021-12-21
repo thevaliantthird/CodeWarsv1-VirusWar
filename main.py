@@ -26,7 +26,6 @@ class Game():
         self.__resources[19][29] = 0
         self.GlobalRobotCount = 0
         self.explosion = pygame.image.load("explode.png")
-        self.virus = pygame.image.load("virus.png")
         self.rate = 10
 
         self.__collectibles = []
@@ -54,9 +53,6 @@ class Game():
         self.__PositionToRobot[(9,19)] = {self.__redbase:True}
         self.__PositionToRobot[(29,19)] = {self.__bluebase:True}
         self.update_score()
-        # for j in range(3):
-        #     self.__redbase.create_robot('')
-        #     self.__bluebase.create_robot('')
 
     def run_game(self):
         iter = 0
@@ -72,7 +68,6 @@ class Game():
             for robo in self.__bluebots:
                 n = scriptblue.ActRobot(robo)
                 moves[robo] = n
-            self.game_over()
             for robo, n in moves.items():
                 if n == 1:
                     robo.move_up()
@@ -96,6 +91,7 @@ class Game():
                 self.screen.blit(self.explosion, b.rect)
             self.update_score()
             self.buttons()
+            self.game_over()
             pygame.display.flip()
             self.__redbase._Base__MovingAverage = (self.__redbase._Base__MovingAverage*(0.9)) + (self.__redbase._Base__TotalTeamElixir*(0.1))
             
@@ -107,15 +103,21 @@ class Game():
             if iter > 1500:
                 break
         self.game_over_iter()
+       
 
     def game_over_iter(self):
+        game_over_font = pygame.font.SysFont(None, 48)
         if self.__bluebase._Base__MovingAverage > self.__redbase._Base__MovingAverage:
             print( "Blue Wins")
-            sys.exit(0)
+            game_over = game_over_font.render("Blue Team Wins", True, (100,100,255), (230,230,230))
+            
         else:
+            game_over = game_over_font.render("Red Team Wins", True, (255,100,100), (230,230,230))
             print( "Red Wins")
-            sys.exit(0)
-
+        self.screen.blit(game_over, (400,400))
+        pygame.display.flip()
+        time.sleep(5)
+        sys.exit(0)
     def updateRoboMap(self):
         for i in range(0,self.__dim[1]):
             for j in range(0,self.__dim[0]):
@@ -185,7 +187,7 @@ class Game():
                 self.__robots[r.rect.y//20][r.rect.x//20] = 1
                 r._Robot__selfElixir -= b._Robot__selfElixir
                 to_kill.add(b)
-                self.__bluebase._Base__TotalTeamElixir -= b._Robot__selfElixir
+                self.__redbase._Base__TotalTeamElixir -= b._Robot__selfElixir
                 self.__bluebase._Base__TotalTeamElixir -= b._Robot__selfElixir
                 b.__Robot_selfElixir = 0
             else:
@@ -227,15 +229,7 @@ class Game():
         for key in self.__PositionToRobot.keys():
             value = self.__PositionToRobot[key]
             if self.__robots[key[1]][key[0]] == 1 or self.__robots[key[1]][key[0]] == 2:
-                with warnings.catch_warnings():
-                    warnings.filterwarnings('error')
-                    try:
-                        V = self.__resources[key[1]][key[0]]/(2*len(value))
-                    except Warning as e:
-                        print(key)
-                        print(value)
-                        print(self.__robots[key[1]][key[0]])
-                
+                V = self.__resources[key[1]][key[0]]/(2*len(value))
                 for v in value:
                     v.addResource(V)
                 self.__resources[key[1]][key[0]] /= 2
@@ -281,11 +275,18 @@ class Game():
 
     def game_over(self):
         """Check conditions of game over"""
+        game_over_font = pygame.font.SysFont(None, 48)
         if self.__redbase._Base__SelfElixir <= 0:
             print( "Blue Wins")
+            game_over = game_over_font.render("Blue Team Wins", True, (100,100,255), (230,230,230))
+            self.screen.blit(game_over, (400,400))
+            time.sleep(5)
             sys.exit(0)
         elif self.__bluebase._Base__SelfElixir <= 0:
             print("Red Wins")
+            game_over = game_over_font.render("Red Team Wins", True, (255,100,100), (230,230,230))
+            self.screen.blit(game_over, (400,400))
+            time.sleep(5)
             sys.exit(0)
             
     

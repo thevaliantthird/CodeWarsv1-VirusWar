@@ -25,7 +25,6 @@ class Base():
 
     def actVirus(self, v, pos):
         g = self.__myGame
-        self.screen.blit(g.virus, pos)
         if pos[0] < 0 or pos[0] >= g._Game__dim[0]:
             return
         if pos[1] < 0 or pos[1] >= g._Game__dim[1]:

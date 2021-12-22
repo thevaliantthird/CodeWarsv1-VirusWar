@@ -327,7 +327,7 @@ class Base():
     def GetYourSignal(self):
         return self.__Signal
     
-    def SetYoutSignal(self, s):
+    def SetYourSignal(self, s):
         str = 'wncc'
         if type(s)!=type(str) or len(s) > 20:
             return

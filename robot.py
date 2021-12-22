@@ -9,7 +9,7 @@ class Robot(Sprite):
         self.type = type
         self.__myBase = base
         self.__selfElixir = 50
-        self.__Signal = 0
+        self.__Signal = ''
         # Integer less than 2^31 -1
         self.__Initialsignal = signal
         if type == "red":

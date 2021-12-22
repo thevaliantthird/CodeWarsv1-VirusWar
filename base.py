@@ -297,7 +297,7 @@ class Base():
             return "blank"
 
     def investigate_sw(self):
-        if self.rect.x == 0:
+        if self.rect.x == 0 or self.rect.y==780:
             return "wall"
         elif self.__robot_map[self.rect.y//20 + 1][self.rect.x//20 - 1] == 1 :
             if self.type == "red":

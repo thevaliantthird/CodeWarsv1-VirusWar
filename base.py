@@ -62,7 +62,7 @@ class Base():
     def GetListOfSignals(self):
         res = []
         for x in self.__robot_list:
-            res.append(x.__Signal)
+            res.append(x._Robot__Signal)
         return res
 
     def addResource(self, v):

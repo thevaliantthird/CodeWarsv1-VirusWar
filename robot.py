@@ -358,10 +358,10 @@ class Robot(Sprite):
         return (self.rect.x//20, self.rect.y//20)
     
     def GetDimensionX(self):
-        return self.__myBase._Base__myGame.__dim[0]
+        return self.__myBase._Base__myGame._Game__dim[0]
 
     def GetDimensionY(self):
-        return self.__myBase._Base__myGame.__dim[1]
+        return self.__myBase._Base__myGame._Game__dim[1]
 
     #def __hash__(self):
      #   return self.ID

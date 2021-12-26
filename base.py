@@ -343,10 +343,10 @@ class Base():
         return (self.rect.x//20,self.rect.y//20)
     
     def GetDimensionX(self):
-        return self.__myGame._Game_dim[0]
+        return self.__myGame._Game__dim[0]
 
     def GetDimensionY(self):
-        return self.__myGame._Game_dim[1]
+        return self.__myGame._Game__dim[1]
 
     def DeployVirus(self, v):
         if v > self.__TotalVirus or v <= 0:

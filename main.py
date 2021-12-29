@@ -211,6 +211,7 @@ class Game():
                 to_kill.add(b)
                 self.__redbase._Base__TotalTeamElixir -= b._Robot__selfElixir
                 self.__bluebase._Base__TotalTeamElixir -= b._Robot__selfElixir
+                self.__redbase._Base__SelfElixir -= b._Robot__selfElixir
                 b._Robot__selfElixir = 0
 
         for b in bluebase_collisions:
@@ -223,6 +224,7 @@ class Game():
                 to_kill.add(b)
                 self.__redbase._Base__TotalTeamElixir -= b._Robot__selfElixir
                 self.__bluebase._Base__TotalTeamElixir -= b._Robot__selfElixir
+                self.__bluebase._Base__SelfElixir -= b._Robot__selfElixir
                 b._Robot__selfElixir = 0
                 
 
@@ -281,7 +283,7 @@ class Game():
         blue_head = head_font.render("Blue Team", False, (130,130,255))
         self.screen.blit(blue_head, (830, 130))
         blue_total = norm_font.render("Total Elixir :" + str(round(self.__bluebase._Base__TotalTeamElixir,2)), False, (230,230,230))
-        blue_self = norm_font.render("Self Elixir : " + str(self.__bluebase._Base__SelfElixir), False, (230,230,230))
+        blue_self = norm_font.render("Self Elixir : " + str(round(self.__bluebase._Base__SelfElixir,2)), False, (230,230,230))
         blue_robots = norm_font.render("No. of Robots: " +str(len(self.__bluebots)), False, (230,230,230))
         blue_virus = norm_font.render("Total Virus: " + str(round(self.__bluebase._Base__TotalVirus, 2)), False, (230,230,230))
         self.screen.blit(blue_total, (850, 170))
@@ -292,7 +294,7 @@ class Game():
         red_head = head_font.render("Red Team", False, (255,130,130))
         self.screen.blit(red_head, (830, 400))
         red_total = norm_font.render("Total Elixir :" + str(round(self.__redbase._Base__TotalTeamElixir,2)), False, (230,230,230))
-        red_self = norm_font.render("Self Elixir : " + str(self.__redbase._Base__SelfElixir), False, (230,230,230))
+        red_self = norm_font.render("Self Elixir : " + str(round(self.__redbase._Base__SelfElixir,2)), False, (230,230,230))
         red_robots = norm_font.render("No. of Robots: " +str(len(self.__redbots)), False, (230,230,230))
         red_virus = norm_font.render("Total Virus: " + str(round(self.__redbase._Base__TotalVirus, 2)), False, (230,230,230))
         self.screen.blit(red_total, (850, 440))

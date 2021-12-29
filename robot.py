@@ -1,6 +1,5 @@
 import pygame
 from pygame.sprite import Sprite
-from random import randint
 
 class Robot(Sprite):
     def __init__(self, screen, x, y, type, signal, base):

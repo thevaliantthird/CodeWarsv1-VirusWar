@@ -1,8 +1,10 @@
 import pygame
 from robot import Robot
+from pygame.sprite import Sprite
 
-class Base():
+class Base(Sprite):
     def __init__(self, screen, x, y, type, __robot_list, __robot_map, game):
+        super().__init__()
         self.screen = screen
         self.type = type
         self.__robot_map = __robot_map
@@ -45,15 +47,23 @@ class Base():
             g._Game__bluebase.VirusOnRobot(pos, v)
             return
         if self.__robot_map[pos[1]][pos[0]]==3 and self==g._Game__bluebase:
-            g._Game__redbase.__SelfElixir -= v
-            g._Game__redbase.__TotalTeamElixir -= v
+            if v <= g._Game__redbase.__SelfElixir:
+                g._Game__redbase.__SelfElixir -= v
+                g._Game__redbase.__TotalTeamElixir -= v
+            else:
+                g._Game__redbase.__SelfElixir  = 0
+                g._Game__redbase.__TotalTeamElixir = 0
             return
         if self.__robot_map[pos[1]][pos[0]]==3 and self==g._Game__redbase:
             self.__TotalVirus += v
             return
         if self.__robot_map[pos[1]][pos[0]]==4 and self==g._Game__redbase:
-            g._Game__bluebase.__SelfElixir -= v
-            g._Game__bluebase.__TotalTeamElixir -= v
+            if v <= g._Game__bluebase.__SelfElixir:
+                g._Game__bluebase.__SelfElixir -= v
+                g._Game__bluebase.__TotalTeamElixir -= v
+            else:
+                g._Game__bluebase.__SelfElixir = 0
+                g._Game__bluebase.__TotalTeamElixir = 0
             return
         if self.__robot_map[pos[1]][pos[0]]==4 and self==g._Game__bluebase:
             self.__TotalVirus += v

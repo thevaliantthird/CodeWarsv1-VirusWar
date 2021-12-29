@@ -169,39 +169,67 @@ class Game():
                         self.rate += 2
     
     def check_collisions(self):
-       removals = pygame.sprite.groupcollide(self.__bluebots, self.__redbots, False, False)
-       #print(removals)
-       to_kill = set()
-       for b, r_list in removals.items():
-           #print(id(b))
-           for r in r_list:
-            #print(id(r))
-            if b._Robot__selfElixir > r._Robot__selfElixir:
-               b._Robot__selfElixir -= r._Robot__selfElixir
-               self.__robots[r.rect.y//20][r.rect.x//20] = 2
-               to_kill.add(r)
-               self.__redbase._Base__TotalTeamElixir -= r._Robot__selfElixir
-               self.__bluebase._Base__TotalTeamElixir -= r._Robot__selfElixir
-               r._Robot__selfElixir = 0
-            elif b._Robot__selfElixir < r._Robot__selfElixir:
-                self.__robots[r.rect.y//20][r.rect.x//20] = 1
-                r._Robot__selfElixir -= b._Robot__selfElixir
+        removals = pygame.sprite.groupcollide(self.__bluebots, self.__redbots, False, False)
+        #print(removals)
+        to_kill = set()
+        for b, r_list in removals.items():
+            #print(id(b))
+            for r in r_list:
+                #print(id(r))
+                if b._Robot__selfElixir > r._Robot__selfElixir:
+                    b._Robot__selfElixir -= r._Robot__selfElixir
+                    self.__robots[r.rect.y//20][r.rect.x//20] = 2
+                    to_kill.add(r)
+                    self.__redbase._Base__TotalTeamElixir -= r._Robot__selfElixir
+                    self.__bluebase._Base__TotalTeamElixir -= r._Robot__selfElixir
+                    r._Robot__selfElixir = 0
+                elif b._Robot__selfElixir < r._Robot__selfElixir:
+                    self.__robots[r.rect.y//20][r.rect.x//20] = 1
+                    r._Robot__selfElixir -= b._Robot__selfElixir
+                    to_kill.add(b)
+                    self.__redbase._Base__TotalTeamElixir -= b._Robot__selfElixir
+                    self.__bluebase._Base__TotalTeamElixir -= b._Robot__selfElixir
+                    b.__Robot_selfElixir = 0
+                else:
+                    self.__robots[r.rect.y//20][r.rect.x//20] = 0
+                    to_kill.add(r)
+                    to_kill.add(b)
+                    self.__redbase._Base__TotalTeamElixir -= r._Robot__selfElixir
+                    self.__bluebase._Base__TotalTeamElixir -= b._Robot__selfElixir
+                    r._Robot__selfElixir = 0
+                    b._Robot__selfElixir = 0
+        redbase_collisions = pygame.sprite.spritecollide(self.__redbase, self.__bluebots, False)
+        bluebase_collisions = pygame.sprite.spritecollide(self.__bluebase, self.__redbots, False)
+
+        for b in redbase_collisions:
+            if b._Robot__selfElixir >= self.__redbase._Base__SelfElixir:
+                b._Robot__selfElixir -= self.__redbase._Base__SelfElixir
+                self.__bluebase._Base__TotalTeamElixir -= self.__redbase._Base__SelfElixir
+                self.__redbase._Base__TotalTeamElixir -= self.__redbase._Base__SelfElixir
+                self.__redbase._Base__SelfElixir = 0
+            else:
                 to_kill.add(b)
                 self.__redbase._Base__TotalTeamElixir -= b._Robot__selfElixir
                 self.__bluebase._Base__TotalTeamElixir -= b._Robot__selfElixir
-                b.__Robot_selfElixir = 0
-            else:
-                self.__robots[r.rect.y//20][r.rect.x//20] = 0
-                to_kill.add(r)
-                to_kill.add(b)
-                self.__redbase._Base__TotalTeamElixir -= r._Robot__selfElixir
-                self.__bluebase._Base__TotalTeamElixir -= b._Robot__selfElixir
-                r._Robot__selfElixir = 0
                 b._Robot__selfElixir = 0
-       for a in to_kill:
-            del self.__PositionToRobot[(a.rect.x//20, a.rect.y//20)][a]
-            a.kill()
-       return removals
+
+        for b in bluebase_collisions:
+            if b._Robot__selfElixir >= self.__bluebase._Base__SelfElixir:
+                b._Robot__selfElixir -= self.__bluebase._Base__SelfElixir
+                self.__bluebase._Base__TotalTeamElixir -= self.__bluebase._Base__SelfElixir
+                self.__redbase._Base__TotalTeamElixir -= self.__bluebase._Base__SelfElixir
+                self.__bluebase._Base__SelfElixir = 0
+            else:
+                to_kill.add(b)
+                self.__redbase._Base__TotalTeamElixir -= b._Robot__selfElixir
+                self.__bluebase._Base__TotalTeamElixir -= b._Robot__selfElixir
+                b._Robot__selfElixir = 0
+                
+
+        for a in to_kill:
+                del self.__PositionToRobot[(a.rect.x//20, a.rect.y//20)][a]
+                a.kill()
+        return removals
 
 
     def create_map(self):
@@ -280,12 +308,14 @@ class Game():
             print( "Blue Wins")
             game_over = game_over_font.render("Blue Team Wins", True, (100,100,255), (230,230,230))
             self.screen.blit(game_over, (400,400))
+            pygame.display.flip()
             time.sleep(5)
             sys.exit(0)
         elif self.__bluebase._Base__SelfElixir <= 0:
             print("Red Wins")
             game_over = game_over_font.render("Red Team Wins", True, (255,100,100), (230,230,230))
             self.screen.blit(game_over, (400,400))
+            pygame.display.flip()
             time.sleep(5)
             sys.exit(0)
             

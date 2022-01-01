@@ -249,7 +249,10 @@ class Game():
                 # if self.__collectibles[i][j].initPoints > 1e-5:
                 #     self.__collectibles[i][j].points = min(self.__collectibles[i][j].initPoints, self.__collectibles[i][j].points*1.3)
                 if self.__collectibles[i][j].initPoints < -1e-5:
-                    self.__collectibles[i][j].points = max(self.__collectibles[i][j].initPoints, self.__collectibles[i][j].points*1.3)
+                    z = self.__collectibles[i][j].points*1.3
+                    if z > 0:
+                        z = 0
+                    self.__collectibles[i][j].points = max(self.__collectibles[i][j].initPoints, z)
                 self.__resources[j][i] = self.__collectibles[i][j].points
                 self.__collectibles[i][j].setColor()
 

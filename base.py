@@ -96,7 +96,7 @@ class Base(Sprite):
                 delete.append(robot)
                 robot.kill()
                 self.__robot_map[pos[1]][pos[0]] = 0
-                self.__myGame._Game__resources[pos[1]][pos[0]]+=e
+                self.__myGame._Game__resources[pos[1]][pos[0]]-=e
             else:
                 self.__TotalTeamElixir -= virus
                 robot._Robot__selfElixir-=virus

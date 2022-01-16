@@ -1,17 +1,19 @@
 import pygame
 from robot import Robot
+from pygame.sprite import Sprite
 
-class Base():
+class Base(Sprite):
     def __init__(self, screen, x, y, type, __robot_list, __robot_map, game):
+        super().__init__()
         self.screen = screen
         self.type = type
         self.__robot_map = __robot_map
         self.__robot_list = __robot_list
         self.__myGame = game
-        self.__SelfElixir = 2000
-        self.__TotalTeamElixir = 2000
+        self.__SelfElixir = 3000
+        self.__TotalTeamElixir = 3000
         self.__TotalVirus = 0
-        self.__MovingAverage = 2000
+        self.__MovingAverage = 3000
         self.__Signal = ''
         
         if type == "red":
@@ -45,15 +47,23 @@ class Base():
             g._Game__bluebase.VirusOnRobot(pos, v)
             return
         if self.__robot_map[pos[1]][pos[0]]==3 and self==g._Game__bluebase:
-            g._Game__redbase.__SelfElixir -= v
-            g._Game__redbase.__TotalTeamElixir -= v
+            if v <= g._Game__redbase.__SelfElixir:
+                g._Game__redbase.__SelfElixir -= v
+                g._Game__redbase.__TotalTeamElixir -= v
+            else:
+                g._Game__redbase.__SelfElixir  = 0
+                g._Game__redbase.__TotalTeamElixir = 0
             return
         if self.__robot_map[pos[1]][pos[0]]==3 and self==g._Game__redbase:
             self.__TotalVirus += v
             return
         if self.__robot_map[pos[1]][pos[0]]==4 and self==g._Game__redbase:
-            g._Game__bluebase.__SelfElixir -= v
-            g._Game__bluebase.__TotalTeamElixir -= v
+            if v <= g._Game__bluebase.__SelfElixir:
+                g._Game__bluebase.__SelfElixir -= v
+                g._Game__bluebase.__TotalTeamElixir -= v
+            else:
+                g._Game__bluebase.__SelfElixir = 0
+                g._Game__bluebase.__TotalTeamElixir = 0
             return
         if self.__robot_map[pos[1]][pos[0]]==4 and self==g._Game__bluebase:
             self.__TotalVirus += v
@@ -62,7 +72,7 @@ class Base():
     def GetListOfSignals(self):
         res = []
         for x in self.__robot_list:
-            res.append(x.__Signal)
+            res.append(x._Robot__Signal)
         return res
 
     def addResource(self, v):
@@ -86,7 +96,7 @@ class Base():
                 delete.append(robot)
                 robot.kill()
                 self.__robot_map[pos[1]][pos[0]] = 0
-                self.__myGame._Game__resources[pos[1]][pos[0]]+=e
+                self.__myGame._Game__resources[pos[1]][pos[0]]-=e
             else:
                 self.__TotalTeamElixir -= virus
                 robot._Robot__selfElixir-=virus
@@ -297,7 +307,7 @@ class Base():
             return "blank"
 
     def investigate_sw(self):
-        if self.rect.x == 0:
+        if self.rect.x == 0 or self.rect.y==780:
             return "wall"
         elif self.__robot_map[self.rect.y//20 + 1][self.rect.x//20 - 1] == 1 :
             if self.type == "red":
@@ -327,7 +337,7 @@ class Base():
     def GetYourSignal(self):
         return self.__Signal
     
-    def SetYoutSignal(self, s):
+    def SetYourSignal(self, s):
         str = 'wncc'
         if type(s)!=type(str) or len(s) > 20:
             return
@@ -343,10 +353,10 @@ class Base():
         return (self.rect.x//20,self.rect.y//20)
     
     def GetDimensionX(self):
-        return self.__myGame._Game_dim[0]
+        return self.__myGame._Game__dim[0]
 
     def GetDimensionY(self):
-        return self.__myGame._Game_dim[1]
+        return self.__myGame._Game__dim[1]
 
     def DeployVirus(self, v):
         if v > self.__TotalVirus or v <= 0:

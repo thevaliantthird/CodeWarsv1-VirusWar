@@ -10,10 +10,10 @@ class Base(Sprite):
         self.__robot_map = __robot_map
         self.__robot_list = __robot_list
         self.__myGame = game
-        self.__SelfElixir = 2000
-        self.__TotalTeamElixir = 2000
+        self.__SelfElixir = 3000
+        self.__TotalTeamElixir = 3000
         self.__TotalVirus = 0
-        self.__MovingAverage = 2000
+        self.__MovingAverage = 3000
         self.__Signal = ''
         
         if type == "red":

@@ -4,29 +4,48 @@ from pygame.sprite import Group
 import numpy as np
 import cv2
 import time
-import warnings 
+import random
+from random import random as rnd
 from base import Base
 from collectible import Collectible
-import scriptred
-import scriptblue
+
 #__resources library
+
+random.seed(5)
+
+
+# f = open('team.txt','r')
+# TL = [F.strip() for F in f.readlines()]
+# f.close()
+# f = open('list.txt')
+# ML = [F.strip() for F in f.readlines()]
+# LM = []
+# for m in ML:
+#     x = m.split(',')
+#     LM.append((x[0],(int(x[1]),int(x[2])),(int(x[3]),int(x[4]))))
+# x2 = int(input('Enter a number between 0 and 39?'))
+
+
 
 class Game():
 
         
-    def __init__(self):
+    def __init__(self, dim, red_pos, blue_pos, map_img, redt, bluet):
         pygame.init()
-        self.screen = pygame.display.set_mode((1200,800))
-        #self.score = pygame.display.set_mode((400, 800))
-        #self.scoreboard = pygame.display.set_caption("Code Wars")
+        self.redt = redt
+        self.bluet = bluet
+        self.__dim = dim
+        self.screen = pygame.display.set_mode((self.__dim[0]*20+400,self.__dim[1]*20))
         self.fps_controller = pygame.time.Clock()
-        self.__dim = (40,40)
-        self.__resources = self.create_map()
-        self.__resources[19][9] = 0
-        self.__resources[19][29] = 0
+        
+        self.redbasepos = red_pos
+        self.bluebasepos= blue_pos
+        self.__resources = self.create_map(map_img)
+        self.__resources[self.redbasepos[1]][self.redbasepos[0]] = 0
+        self.__resources[self.bluebasepos[1]][self.bluebasepos[0]] = 0
         self.GlobalRobotCount = 0
         self.explosion = pygame.image.load("explode.png")
-        self.rate = 10
+        self.rate = 8
 
         self.__collectibles = []
         
@@ -41,33 +60,81 @@ class Game():
 
         self.__bluebots = Group()
         self.__redbots = Group()
-        self.__robots = np.zeros(self.__dim)
+        self.__robots = np.zeros((self.__dim[1], self.__dim[0]))
         # 0 in self.robots means no robots
         # 1 means one robot of red team
         # 2 means one robot of blue team
         # 3 means base for team red
         # 4 means base for team blue
 
-        self.__redbase = Base(self.screen, 180, 380, 'red', self.__redbots, self.__robots,self)
-        self.__bluebase = Base(self.screen, 580, 380, 'blue', self.__bluebots, self.__robots,self)
-        self.__PositionToRobot[(9,19)] = {self.__redbase:True}
-        self.__PositionToRobot[(29,19)] = {self.__bluebase:True}
+        self.__redbase = Base(self.screen, self.redbasepos[0]*20, self.redbasepos[1]*20, 'red', self.__redbots, self.__robots,self)
+        self.__bluebase = Base(self.screen, self.bluebasepos[0]*20, self.bluebasepos[1]*20, 'blue', self.__bluebots, self.__robots,self)
+        self.__PositionToRobot[self.redbasepos] = {self.__redbase:True}
+        self.__PositionToRobot[self.bluebasepos] = {self.__bluebase:True}
         self.update_score()
 
     def run_game(self):
         iter = 0
         while True:
             iter+=1
+            if iter > 1500:
+                self.game_over_iter()
+                self.check_events()
+                continue
             self.screen.fill((60,60,60))
-            scriptblue.ActBase(self.__bluebase)
-            scriptred.ActBase(self.__redbase)
+            print(np.sum((self.__resources > 50).astype('int')))
             moves = {}
-            for robo in self.__redbots:
-                n = scriptred.ActRobot(robo)
-                moves[robo] = n
-            for robo in self.__bluebots:
-                n = scriptblue.ActRobot(robo)
-                moves[robo] = n
+            if (rnd()>0.5):
+                try:
+                    scriptblue.ActBase(self.__bluebase)
+                except:
+                    print("Bluebase error")
+                try:
+                    scriptred.ActBase(self.__redbase)
+                except:
+                    print("Redbase error")
+                
+                for robo in self.__redbots:
+                    try:
+                        n = scriptred.ActRobot(robo)
+                    except:
+                        n=0
+                        print("Redbot error")
+                    moves[robo] = n
+                for robo in self.__bluebots:
+                    try:
+                        n = scriptblue.ActRobot(robo)
+                    except:
+                        n=0
+                        print("Blubot error")
+                    moves[robo] = n
+            else:
+                try:
+                    scriptred.ActBase(self.__redbase)
+                except:
+                    print("Redbase error")
+                try:
+                    scriptblue.ActBase(self.__bluebase)
+                except:
+                    print("Bluebase error")
+
+                for robo in self.__bluebots:
+                    try:
+                        n = scriptblue.ActRobot(robo)
+                    except:
+                        n=0
+                        print("Blue bot error")
+                    moves[robo] = n
+
+                for robo in self.__redbots:
+                    try:
+                        n = scriptred.ActRobot(robo)
+                    except:
+                        n=0
+                        print("Redbot error")
+                    moves[robo] = n
+            
+            
             for robo, n in moves.items():
                 if n == 1:
                     robo.move_up()
@@ -91,7 +158,6 @@ class Game():
                 self.screen.blit(self.explosion, b.rect)
             self.update_score()
             self.buttons()
-            self.game_over()
             pygame.display.flip()
             self.__redbase._Base__MovingAverage = (self.__redbase._Base__MovingAverage*(0.9)) + (self.__redbase._Base__TotalTeamElixir*(0.1))
             
@@ -100,24 +166,23 @@ class Game():
                 self.replenish()
             self.check_events()
             self.fps_controller.tick(self.rate)
-            if iter > 1500:
-                break
-        self.game_over_iter()
+            #pygame.display.iconify()
+            self.game_over()
        
 
     def game_over_iter(self):
         game_over_font = pygame.font.SysFont(None, 48)
         if self.__bluebase._Base__MovingAverage > self.__redbase._Base__MovingAverage:
             print( "Blue Wins")
-            game_over = game_over_font.render("Blue Team Wins", True, (100,100,255), (230,230,230))
+            game_over = game_over_font.render(self.bluet + " Wins", True, (100,100,255), (230,230,230))
             
         else:
-            game_over = game_over_font.render("Red Team Wins", True, (255,100,100), (230,230,230))
+            
             print( "Red Wins")
-        self.screen.blit(game_over, (400,400))
+            game_over = game_over_font.render(self.redt+ " Wins", True, (255,100,100), (230,230,230))
+        self.screen.blit(game_over, ((self.__dim[0])*10,(self.__dim[1])*10))
         pygame.display.flip()
-        time.sleep(5)
-        sys.exit(0)
+
     def updateRoboMap(self):
         for i in range(0,self.__dim[1]):
             for j in range(0,self.__dim[0]):
@@ -142,19 +207,19 @@ class Game():
         button_font = pygame.font.SysFont(None, 36)
         slow_down = button_font.render("Slower", True, (230,230,230))
         self.slow_rect = slow_down.get_rect()
-        self.slow_rect.center = (860, 655)
+        self.slow_rect.center = ((self.__dim[0])*20+60, self.__dim[1]*18 + 5)
         self.slow_rect.width += 20
         self.slow_rect.height += 20
         pygame.draw.rect(self.screen, (20,20,20),  self.slow_rect)
-        self.screen.blit(slow_down, (830, 650))
+        self.screen.blit(slow_down, ((self.__dim[0])*20+30, self.__dim[1]*18))
 
         speed_up = button_font.render("Faster", True, (230,230,230))
         self.fast_rect = speed_up.get_rect()
-        self.fast_rect.center = (1058, 655)
+        self.fast_rect.center = ((self.__dim[0])*20+258, self.__dim[1]*18 +5)
         self.fast_rect.width += 20
         self.fast_rect.height += 20
         pygame.draw.rect(self.screen, (20,20,20),  self.fast_rect)
-        self.screen.blit(speed_up, (1030, 650))
+        self.screen.blit(speed_up, ((self.__dim[0])*20+230, self.__dim[1]*18))
 
     def check_events(self):
         for event in pygame.event.get():
@@ -234,12 +299,12 @@ class Game():
         return removals
 
 
-    def create_map(self):
+    def create_map(self, img_path):
         """Take info about __collectibles and create the map"""
-        im = cv2.imread("test_img3.jpg", cv2.IMREAD_GRAYSCALE)
-        im = cv2.resize(im, (40,40))
+        im = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+        im = cv2.resize(im, self.__dim)
         im = np.array(im)
-        im = im - np.full((40,40), 127)
+        im = im - np.full((self.__dim[1],self.__dim[0]), 127)
         im = (im/127)*50
         return np.array(im)
 
@@ -278,53 +343,188 @@ class Game():
         title_font = pygame.font.SysFont(None, 48)
         title = title_font.render("Score Board", True, (255,255,255))
         titlerect = title.get_rect()
-        titlerect.x = 900
-        titlerect.y = 50
+        titlerect.x = self.__dim[0]*20+100
+        titlerect.y = 40
         self.screen.blit(title, titlerect)
         head_font = pygame.font.SysFont(None, 40)
         norm_font = pygame.font.SysFont(None, 32)
-        blue_head = head_font.render("Blue Team", False, (130,130,255))
-        self.screen.blit(blue_head, (830, 130))
+        blue_head = head_font.render(self.bluet, False, (130,130,255))
+        self.screen.blit(blue_head, ((self.__dim[0])*20+ 30, self.__dim[1]*2.5))
         blue_total = norm_font.render("Total Elixir :" + str(round(self.__bluebase._Base__TotalTeamElixir,2)), False, (230,230,230))
         blue_self = norm_font.render("Self Elixir : " + str(round(self.__bluebase._Base__SelfElixir,2)), False, (230,230,230))
         blue_robots = norm_font.render("No. of Robots: " +str(len(self.__bluebots)), False, (230,230,230))
         blue_virus = norm_font.render("Total Virus: " + str(round(self.__bluebase._Base__TotalVirus, 2)), False, (230,230,230))
-        self.screen.blit(blue_total, (850, 170))
-        self.screen.blit(blue_self, (850, 210))
-        self.screen.blit(blue_robots, (850, 250))
-        self.screen.blit(blue_virus, (850, 290))
+        self.screen.blit(blue_total, ((self.__dim[0])*20+50, self.__dim[1]*5))
+        self.screen.blit(blue_self, ((self.__dim[0])*20+50, self.__dim[1]*5 + 30))
+        self.screen.blit(blue_robots, ((self.__dim[0])*20+50, self.__dim[1]*5 + 60))
+        self.screen.blit(blue_virus, ((self.__dim[0])*20+50, self.__dim[1]*5 + 90))
 
-        red_head = head_font.render("Red Team", False, (255,130,130))
-        self.screen.blit(red_head, (830, 400))
+        red_head = head_font.render(self.redt, False, (255,130,130))
+        self.screen.blit(red_head, ((self.__dim[0])*20+30, self.__dim[1]*10))
         red_total = norm_font.render("Total Elixir :" + str(round(self.__redbase._Base__TotalTeamElixir,2)), False, (230,230,230))
         red_self = norm_font.render("Self Elixir : " + str(round(self.__redbase._Base__SelfElixir,2)), False, (230,230,230))
         red_robots = norm_font.render("No. of Robots: " +str(len(self.__redbots)), False, (230,230,230))
         red_virus = norm_font.render("Total Virus: " + str(round(self.__redbase._Base__TotalVirus, 2)), False, (230,230,230))
-        self.screen.blit(red_total, (850, 440))
-        self.screen.blit(red_self, (850, 480))
-        self.screen.blit(red_robots, (850, 520))
-        self.screen.blit(red_virus, (850, 560))
+        self.screen.blit(red_total, ((self.__dim[0])*20+50, self.__dim[1]*12))
+        self.screen.blit(red_self, ((self.__dim[0])*20+50, self.__dim[1]*12 + 30))
+        self.screen.blit(red_robots, ((self.__dim[0])*20+50, self.__dim[1]*12 + 60))
+        self.screen.blit(red_virus, ((self.__dim[0])*20+50, self.__dim[1]*12 + 90))
         
 
     def game_over(self):
         """Check conditions of game over"""
         game_over_font = pygame.font.SysFont(None, 48)
-        if self.__redbase._Base__SelfElixir <= 0:
+        if self.__redbase._Base__SelfElixir <= 0.1:
             print( "Blue Wins")
-            game_over = game_over_font.render("Blue Team Wins", True, (100,100,255), (230,230,230))
-            self.screen.blit(game_over, (400,400))
-            pygame.display.flip()
-            time.sleep(5)
-            sys.exit(0)
-        elif self.__bluebase._Base__SelfElixir <= 0:
-            print("Red Wins")
-            game_over = game_over_font.render("Red Team Wins", True, (255,100,100), (230,230,230))
-            self.screen.blit(game_over, (400,400))
-            pygame.display.flip()
-            time.sleep(5)
-            sys.exit(0)
+            game_over = game_over_font.render(self.bluet+" Wins", True, (100,100,255), (230,230,230))
+            self.screen.blit(game_over, ((self.__dim[0])*10,(self.__dim[0])*10))
             
-    
+            #time.sleep(5)
+            while True:
+                pygame.display.flip()
+                self.check_events()
+            
+        elif self.__bluebase._Base__SelfElixir <= 0.1:
+            print("Red Wins")
+            game_over = game_over_font.render(self.redt+" Wins", True, (255,100,100), (230,230,230))
+            self.screen.blit(game_over, ((self.__dim[0])*10,(self.__dim[0])*10))
+            pygame.display.flip()
+            #time.sleep(5)
+            while True:
+                pygame.display.flip()
+                self.check_events()
+            
 
-game = Game()
-game.run_game()
+
+# for i in range(0,len(TL)):
+#     print(i,'.',TL[i])
+
+
+# team1 = TL[int(input('Team 1 is ?'))]
+# team2 = TL[int(input('Team 2 is ?'))]
+
+# import shutil
+# import os
+
+# os.remove('scriptred.py')
+# os.remove('scriptblue.py')
+
+# shutil.copy('top16/'+team1,'scriptred.py')
+# shutil.copy('top16/'+team2,'scriptblue.py')
+import scriptblue
+import scriptred
+
+G = Game((40,40),(8,28),(31,28),'maps/test_img3.jpg', 'team1', 'team2')
+G.run_game()
+
+# import pickle
+# import os
+# import shutil
+# import importlib
+
+# def startmatch(team1,team2,map,dim,rpos,bpos):
+#     os.remove('scriptred.py')
+#     os.remove('scriptblue.py')
+#     shutil.copy(name + '/'+team1,'scriptred.py')
+#     shutil.copy(name+'/'+team2,'scriptblue.py')
+#     try:
+#         importlib.reload(scriptred)
+#     except:
+#         print('scriptred load failed!')
+#     try:
+#         importlib.reload(scriptblue)
+#     except:
+#         print('scriptblue load failed!')
+#     g = Game(dim,rpos,bpos,map)
+#     return g.run_game()
+
+
+# name = 'challengers'
+# f = open(name + 'teamnum.pic','rb')
+# TN = pickle.load(f)
+
+# g = open(name + 'status.pic','rb')
+# S = pickle.load(g)
+# g.close()
+
+# si = S['starti']
+# sj = S['startj']
+
+# for i in range(si,21):
+#     for j in range(i+1,21):
+#         if i==si and j < sj:
+#             continue
+#         scorei = 0
+#         scorej = 0
+#         s = startmatch(TN[i],TN[j],'Ved.png',(40,40),(9,19),(29,19))
+#         scorei += s
+#         scorej += (1-s)
+#         s = startmatch(TN[j],TN[i],'spiral.jpg',(40,40),(20,9),(20,29))
+#         scorei += (1-s)
+#         scorej += s
+#         s = startmatch(TN[j],TN[i],'123.jpeg',(40,40),(9,9),(30,30))
+#         scorei += (1-s)
+#         scorej += s
+#         S[i]+=scorei
+#         S[j]+=scorej
+#         S['startj'] += 1
+#         if S['startj']==21:
+#             S['startj'] = 0
+#             S['starti']+=1
+#         if S['starti']==21:
+#             print('ALL GAMES COMPLETE!!!')
+#         f = open(name + 'status.pic','wb')
+#         pickle.dump(S,f)
+#         f.close()
+#         print('Match between',TN[i],'and',TN[j],'culminates!')
+
+
+
+
+
+# # name = 'league2'
+# # f = open(name + 'teamnum.pic','rb')
+# # TN = pickle.load(f)
+
+# # g = open(name + 'status.pic','rb')
+# # S = pickle.load(g)
+# # g.close()
+
+
+
+# # si = S['starti']
+# # sj = S['startj']
+
+
+
+# # for i in range(si,23):
+# #     for j in range(i+1,23):
+# #         if i==si and j < sj:
+# #             continue
+# #         scorei = 0
+# #         if i==2 or j ==2 or i==7 or j ==7 or i==12 or j ==12:
+# #             continue
+# #         scorej = 0
+# #         s = startmatch(TN[i],TN[j],'Ved.png',(40,40),(9,19),(29,19))
+# #         scorei += s
+# #         scorej += (1-s)
+# #         s = startmatch(TN[j],TN[i],'spiral.jpg',(40,40),(20,9),(20,29))
+# #         scorei += (1-s)
+# #         scorej += s
+# #         s = startmatch(TN[j],TN[i],'123.jpeg',(40,40),(9,9),(30,30))
+# #         scorei += (1-s)
+# #         scorej += s
+# #         S[i]+=scorei
+# #         S[j]+=scorej
+# #         S['startj'] += 1
+# #         if S['startj']==23:
+# #             S['startj'] = 0
+# #             S['starti']+=1
+# #         if S['starti']==23:
+# #             print('ALL GAMES COMPLETE!!!')
+# #         f = open(name + 'status.pic','wb')
+# #         pickle.dump(S,f)
+# #         f.close()
+# #         print('Match between',TN[i],'and',TN[j],'culminates!')
+
+

@@ -10,10 +10,10 @@ class Base(Sprite):
         self.__robot_map = __robot_map
         self.__robot_list = __robot_list
         self.__myGame = game
-        self.__SelfElixir = 2000
-        self.__TotalTeamElixir = 2000
+        self.__SelfElixir = 3000
+        self.__TotalTeamElixir = 3000
         self.__TotalVirus = 0
-        self.__MovingAverage = 2000
+        self.__MovingAverage = 3000
         self.__Signal = ''
         
         if type == "red":
@@ -96,7 +96,7 @@ class Base(Sprite):
                 delete.append(robot)
                 robot.kill()
                 self.__robot_map[pos[1]][pos[0]] = 0
-                self.__myGame._Game__resources[pos[1]][pos[0]]+=e
+                self.__myGame._Game__resources[pos[1]][pos[0]]-=e
             else:
                 self.__TotalTeamElixir -= virus
                 robot._Robot__selfElixir-=virus
@@ -353,10 +353,10 @@ class Base(Sprite):
         return (self.rect.x//20,self.rect.y//20)
     
     def GetDimensionX(self):
-        return self.__myGame._Game_dim[0]
+        return self.__myGame._Game__dim[0]
 
     def GetDimensionY(self):
-        return self.__myGame._Game_dim[1]
+        return self.__myGame._Game__dim[1]
 
     def DeployVirus(self, v):
         if v > self.__TotalVirus or v <= 0:

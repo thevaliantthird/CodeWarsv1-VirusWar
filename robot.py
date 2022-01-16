@@ -51,7 +51,7 @@ class Robot(Sprite):
             self.__myBase._Base__TotalTeamElixir += v
 
     def move_down(self):
-        if self.rect.y < 780:
+        if self.rect.y < (self.__myBase._Base__myGame._Game__dim[1]-1)*20:
             #self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
             try:
                 del self.__myBase._Base__myGame._Game__PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
@@ -87,7 +87,7 @@ class Robot(Sprite):
                 self.__myBase._Base__robot_map[self.rect.y//20][self.rect.x//20] = 2
 
     def move_right(self):
-        if self.rect.x < 780:
+        if self.rect.x < (self.__myBase._Base__myGame._Game__dim[0]-1)*20:
             #self.__myBase.robot_map[self.rect.y//20][self.rect.x//20] = 0
             try: 
                 del self.__myBase._Base__myGame._Game__PositionToRobot[(self.rect.x//20, self.rect.y//20)][self]
@@ -132,7 +132,7 @@ class Robot(Sprite):
     
 
     def investigate_down(self):
-        if self.rect.y == 780:
+        if self.rect.y == (self.__myBase._Base__myGame._Game__dim[1]-1)*20:
             return "wall"
         elif self.__myBase._Base__robot_map[self.rect.y//20  + 1][self.rect.x//20] == 1 :
             if self.type == "red":
@@ -185,7 +185,7 @@ class Robot(Sprite):
 
     
     def investigate_right(self):
-        if self.rect.x == 780:
+        if self.rect.x == (self.__myBase._Base__myGame._Game__dim[0]-1)*20:
             return "wall"
         elif self.__myBase._Base__robot_map[self.rect.y//20][self.rect.x//20 + 1] == 1 :
             if self.type == "red":
@@ -212,7 +212,7 @@ class Robot(Sprite):
 
     
     def investigate_ne(self):
-        if self.rect.x == 780 or self.rect.y == 0:
+        if self.rect.x == (self.__myBase._Base__myGame._Game__dim[0]-1)*20 or self.rect.y == 0:
             return "wall"
         elif self.__myBase._Base__robot_map[self.rect.y//20 - 1][self.rect.x//20 + 1] == 1 :
             if self.type == "red":
@@ -264,7 +264,7 @@ class Robot(Sprite):
             return "blank"
 
     def investigate_se(self):
-        if self.rect.x == 780 or self.rect.y == 780:
+        if self.rect.x == (self.__myBase._Base__myGame._Game__dim[0]-1)*20 or self.rect.y == (self.__myBase._Base__myGame._Game__dim[1]-1)*20:
             return "wall"
         elif self.__myBase._Base__robot_map[self.rect.y//20 + 1][self.rect.x//20 + 1] == 1 :
             if self.type == "red":
@@ -290,7 +290,7 @@ class Robot(Sprite):
             return "blank"
 
     def investigate_sw(self):
-        if self.rect.x == 0 or self.rect.y == 780:
+        if self.rect.x == 0 or self.rect.y == (self.__myBase._Base__myGame._Game__dim[1]-1)*20:
             return "wall"
         elif self.__myBase._Base__robot_map[self.rect.y//20 + 1][self.rect.x//20 - 1] == 1 :
             if self.type == "red":
@@ -357,10 +357,10 @@ class Robot(Sprite):
         return (self.rect.x//20, self.rect.y//20)
     
     def GetDimensionX(self):
-        return self.__myBase._Base__myGame.__dim[0]
+        return self.__myBase._Base__myGame._Game__dim[0]
 
     def GetDimensionY(self):
-        return self.__myBase._Base__myGame.__dim[1]
+        return self.__myBase._Base__myGame._Game__dim[1]
 
     #def __hash__(self):
      #   return self.ID
